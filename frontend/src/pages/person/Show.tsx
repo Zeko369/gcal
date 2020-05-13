@@ -5,7 +5,7 @@ import { Person } from "../Home";
 import Table from "../../components/Table";
 import useSWR from "../../util/useSWR";
 
-interface Response extends Person {
+export interface Response extends Person {
   formatted: { allDay: boolean; summary: string; time: number; start: string; planned: boolean }[];
 }
 

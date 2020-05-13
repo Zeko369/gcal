@@ -1,8 +1,10 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { Link } from "react-router-dom";
+import { mutate, cache } from "swr";
 
 import Table from "../components/Table";
-import useSWR from "../util/useSWR";
+import useSWR, { fetcher } from "../util/useSWR";
+import { Response } from "./person/Show";
 
 export interface Person {
   person: string;
@@ -40,7 +42,28 @@ const HomeData: React.FC = () => {
   );
 };
 
+const apiUrl = (path: string) => `http://localhost:5000/api/${path}`;
+const prefetch = () => {
+  return fetcher<string[]>(apiUrl("people")).then((data) =>
+    Promise.all(
+      data
+        .filter((name) => !cache.keys().includes(apiUrl(`gcal/p/${name}`)))
+        .map((name) =>
+          fetcher<Response>(apiUrl(`gcal/p/${name}`)).then((person) => {
+            mutate(apiUrl(`gcal/p/${name}`), person, false);
+          })
+        )
+    )
+  );
+};
+
 const Home: React.FC = () => {
+  useEffect(() => {
+    prefetch()
+      .then(() => console.log("Prefetched"))
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
     <Suspense fallback={<h1>Loading...</h1>}>
       <HomeData />
