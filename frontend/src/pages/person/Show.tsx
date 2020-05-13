@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { Suspense } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { Person } from "../Home";

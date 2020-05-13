@@ -1,10 +1,11 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { mutate, cache } from "swr";
 
 import Table from "../components/Table";
 import useSWR, { fetcher } from "../util/useSWR";
 import { Response } from "./person/Show";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 export interface Person {
   person: string;
@@ -66,7 +67,9 @@ const Home: React.FC = () => {
 
   return (
     <Suspense fallback={<h1>Loading...</h1>}>
-      <HomeData />
+      <ErrorBoundary fallback={<h1>Error...</h1>}>
+        <HomeData />
+      </ErrorBoundary>
     </Suspense>
   );
 };
