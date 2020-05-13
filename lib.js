@@ -13,7 +13,7 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 // time.
 const TOKEN_PATH = "token.json";
 
-const getAll = async () => {
+const authenticatedWrapper = (callback) => async () => {
   try {
     const content = await fs.promises.readFile("credentials.json", "utf-8");
 
@@ -33,64 +33,25 @@ const getAll = async () => {
       await getAccessToken(oAuth2Client);
     }
 
-    return listEvents(oAuth2Client);
+    return callback(oAuth2Client);
   } catch (err) {
     console.log(err);
   }
 };
 
-const getPerson = async (person, withEvents) => {
-  try {
-    const content = await fs.promises.readFile("credentials.json", "utf-8");
+const getAll = async () => {
+  return authenticatedWrapper(listEvents)();
+};
 
-    const { client_secret, client_id, redirect_uris } = JSON.parse(
-      content
-    ).installed;
-    const oAuth2Client = new google.auth.OAuth2(
-      client_id,
-      client_secret,
-      redirect_uris[0]
-    );
-
-    try {
-      const token = await fs.promises.readFile(TOKEN_PATH, "utf-8");
-      oAuth2Client.setCredentials(JSON.parse(token));
-    } catch (err) {
-      await getAccessToken(oAuth2Client);
-    }
-
-    return listEvents(oAuth2Client, person, withEvents);
-  } catch (err) {
-    console.log(err);
-  }
+const getPerson = (person, withEvents) => {
+  return authenticatedWrapper((auth) => listEvents(auth, person, withEvents))();
 };
 
 const getCalendars = async () => {
-  try {
-    const content = await fs.promises.readFile("credentials.json", "utf-8");
-
-    const { client_secret, client_id, redirect_uris } = JSON.parse(
-      content
-    ).installed;
-    const oAuth2Client = new google.auth.OAuth2(
-      client_id,
-      client_secret,
-      redirect_uris[0]
-    );
-
-    try {
-      const token = await fs.promises.readFile(TOKEN_PATH, "utf-8");
-      oAuth2Client.setCredentials(JSON.parse(token));
-    } catch (err) {
-      await getAccessToken(oAuth2Client);
-    }
-
-    const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
-
+  return authenticatedWrapper((auth) => {
+    const calendar = google.calendar({ version: "v3", auth });
     return calendar.calendarList.list();
-  } catch (err) {
-    console.log(err);
-  }
+  })();
 };
 
 module.exports = {
@@ -100,7 +61,7 @@ module.exports = {
   getCalendars,
 };
 
-async function getAccessToken(oAuth2Client, callback) {
+async function getAccessToken(oAuth2Client) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
@@ -128,11 +89,6 @@ async function getAccessToken(oAuth2Client, callback) {
     console.error("Error retrieving access token", err);
   }
 }
-
-/**
- * Lists the next 10 events on the user's primary calendar.
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
 
 const monday = (date = new Date()) => {
   let diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
@@ -163,7 +119,12 @@ const formatTime = (time) => {
 
   return out;
 };
-
+/**
+ * Lists the next 10 events on the user's primary calendar.
+ * @param {any} auth An authorized OAuth2 client.
+ * @param {string | undefined} person
+ * @param {boolean} withEvents
+ */
 function listEvents(auth, person = undefined, withEvents = false) {
   const calendar = google.calendar({ version: "v3", auth });
 
