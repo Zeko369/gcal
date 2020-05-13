@@ -23,12 +23,11 @@ app.get("/api/gcal", (_req, res) => {
 app.get("/api/gcal/list", (_req, res) => {
   getCalendars()
     .then((out) => {
-      /**
-       * @param {{ summary: any; id: any; }} item
-       */
-      res.json(
-        out.data.items.map((item) => ({ name: item.summary, id: item.id }))
-      );
+      if (out !== null) {
+        res.json(
+          out.data.items.map((item) => ({ name: item.summary, id: item.id }))
+        );
+      }
     })
     .catch((err) => {
       res.status(500).json({ err });

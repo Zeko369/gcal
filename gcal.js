@@ -11,8 +11,10 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 const TOKEN_PATH = "token.json";
 
 /**
- *
- * @param {(auth: any) => any} callback
+ * @function
+ * @template A
+ * @param {(auth: any) => Promise<A>} callback
+ * @returns {() => Promise<A | null>}
  */
 const authenticatedWrapper = (callback) => async () => {
   try {
@@ -37,6 +39,7 @@ const authenticatedWrapper = (callback) => async () => {
     return callback(oAuth2Client);
   } catch (err) {
     console.log(err);
+    return null;
   }
 };
 
