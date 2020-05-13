@@ -15,7 +15,7 @@ const PersonShow: React.FC = () => {
   const [data, setData] = useState<Response>();
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/gcal/${name}`)
+    fetch(`http://localhost:5000/api/gcal/p/${name}`)
       .then((res) => res.json())
       .then((data) => {
         setData(data);

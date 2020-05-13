@@ -65,7 +65,40 @@ const getPerson = async (person, withEvents) => {
   }
 };
 
-module.exports = { getAll, getPerson, people: Object.keys(calendars) };
+const getCalendars = async () => {
+  try {
+    const content = await fs.promises.readFile("credentials.json", "utf-8");
+
+    const { client_secret, client_id, redirect_uris } = JSON.parse(
+      content
+    ).installed;
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id,
+      client_secret,
+      redirect_uris[0]
+    );
+
+    try {
+      const token = await fs.promises.readFile(TOKEN_PATH, "utf-8");
+      oAuth2Client.setCredentials(JSON.parse(token));
+    } catch (err) {
+      await getAccessToken(oAuth2Client);
+    }
+
+    const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
+
+    return calendar.calendarList.list();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = {
+  getAll,
+  getPerson,
+  people: Object.keys(calendars),
+  getCalendars,
+};
 
 async function getAccessToken(oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({

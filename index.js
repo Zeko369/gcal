@@ -4,14 +4,14 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 
-const { getAll, getPerson, people } = require("./lib");
+const { getAll, getPerson, people, getCalendars } = require("./lib");
 
 const app = express();
 
 app.use(cors());
 app.use(morgan("dev"));
 
-app.get("/api/gcal", (req, res) => {
+app.get("/api/gcal", (_req, res) => {
   getAll()
     .then((data) => {
       res.json(data);
@@ -19,7 +19,19 @@ app.get("/api/gcal", (req, res) => {
     .catch((err) => res.status(500).json({ err }));
 });
 
-app.get("/api/gcal/:person", (req, res) => {
+app.get("/api/gcal/list", (_req, res) => {
+  getCalendars()
+    .then((out) => {
+      res.json(
+        out.data.items.map((item) => ({ name: item.summary, id: item.id }))
+      );
+    })
+    .catch((err) => {
+      res.status(500).json({ err });
+    });
+});
+
+app.get("/api/gcal/p/:person", (req, res) => {
   const { person } = req.params;
   if (people.includes(person)) {
     return getPerson(person, true)
@@ -36,7 +48,7 @@ app.get("/api/gcal/:person", (req, res) => {
   res.status(404).json({ err: "no such person" });
 });
 
-app.get("/api/people", (req, res) => {
+app.get("/api/people", (_req, res) => {
   res.json(people);
 });
 
