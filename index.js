@@ -1,10 +1,11 @@
-// @ts-check
-
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 
-const { getAll, getPerson, people, getCalendars } = require("./lib");
+const { getAll, getPerson, getCalendars } = require("./lib");
+const calendars = require("./calendars.json");
+
+const people = Object.keys(calendars);
 
 const app = express();
 
@@ -22,6 +23,9 @@ app.get("/api/gcal", (_req, res) => {
 app.get("/api/gcal/list", (_req, res) => {
   getCalendars()
     .then((out) => {
+      /**
+       * @param {{ summary: any; id: any; }} item
+       */
       res.json(
         out.data.items.map((item) => ({ name: item.summary, id: item.id }))
       );
