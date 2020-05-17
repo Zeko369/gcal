@@ -1,4 +1,5 @@
 import fs from "fs";
+import { resolve } from "path";
 import readline from "readline";
 import { promisify } from "util";
 import * as g from "googleapis";
@@ -10,13 +11,16 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = "token.json";
+const TOKEN_PATH = resolve("./src/token.json");
 
 export const authenticatedWrapper = <A>(
   callback: (auth: any) => Promise<A>
 ): (() => Promise<A | null>) => async () => {
   try {
-    const content = await fs.promises.readFile("credentials.json", "utf-8");
+    const content = await fs.promises.readFile(
+      resolve("./src/credentials.json"),
+      "utf-8"
+    );
 
     const { client_secret, client_id, redirect_uris } = JSON.parse(
       content
