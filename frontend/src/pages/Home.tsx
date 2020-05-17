@@ -1,9 +1,9 @@
 import React, { useEffect, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { mutate, cache } from "swr";
+import useSWR, { mutate, cache } from "swr";
 
 import Table from "../components/Table";
-import useSWR, { fetcher } from "../util/useSWR";
+import fetcher from "../util/fetch";
 import { Response } from "./person/Show";
 import ErrorBoundary from "../components/ErrorBoundary";
 
@@ -44,6 +44,7 @@ const HomeData: React.FC = () => {
 };
 
 const apiUrl = (path: string) => `http://localhost:5000/api/${path}`;
+
 const prefetch = () => {
   return fetcher<string[]>(apiUrl("people")).then((data) =>
     Promise.all(

@@ -1,9 +1,9 @@
 import React, { Suspense } from "react";
 import { Link, useParams } from "react-router-dom";
+import useSWR from "swr";
 
 import { Person } from "../Home";
 import Table from "../../components/Table";
-import useSWR from "../../util/useSWR";
 
 export interface Response extends Person {
   formatted: { allDay: boolean; summary: string; time: number; start: string; planned: boolean }[];
@@ -28,8 +28,8 @@ const PersonData: React.FC<{ name: string }> = ({ name }) => {
         </thead>
         <tbody>
           {data && data?.formatted.length > 0 ? (
-            data.formatted.map((item) => (
-              <tr>
+            data.formatted.map((item, index) => (
+              <tr key={`${index}-item.summary`}>
                 <td>
                   <i className="material-icons">{`check_box${
                     item.planned ? "_outline_blank" : ""

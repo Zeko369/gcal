@@ -1,5 +1,3 @@
-import swr, { responseInterface } from "swr";
-
 export const fetcher = async function <JSON = any>(
   input: RequestInfo,
   init?: RequestInit
@@ -11,8 +9,4 @@ export const fetcher = async function <JSON = any>(
   return res.json();
 };
 
-const useSWR = <Data, Error = any>(url: string): responseInterface<Data, Error> => {
-  return swr<Data>(url, fetcher, { suspense: true });
-};
-
-export default useSWR;
+export default fetcher;
