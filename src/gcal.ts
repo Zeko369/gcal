@@ -1,7 +1,9 @@
-const fs = require("fs");
-const readline = require("readline");
-const { promisify } = require("util");
-const { google } = require("googleapis");
+import fs from "fs";
+import readline from "readline";
+import { promisify } from "util";
+import * as g from "googleapis";
+
+const google = g.google;
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
@@ -10,13 +12,9 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 // time.
 const TOKEN_PATH = "token.json";
 
-/**
- * @function
- * @template A
- * @param {(auth: any) => Promise<A>} callback
- * @returns {() => Promise<A | null>}
- */
-const authenticatedWrapper = (callback) => async () => {
+export const authenticatedWrapper = <A>(
+  callback: (auth: any) => Promise<A>
+): (() => Promise<A | null>) => async () => {
   try {
     const content = await fs.promises.readFile("credentials.json", "utf-8");
 
@@ -47,7 +45,7 @@ const authenticatedWrapper = (callback) => async () => {
  *
  * @param {any} oAuth2Client
  */
-async function getAccessToken(oAuth2Client) {
+async function getAccessToken(oAuth2Client: any) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
@@ -75,5 +73,3 @@ async function getAccessToken(oAuth2Client) {
     console.error("Error retrieving access token", err);
   }
 }
-
-module.exports = { authenticatedWrapper };

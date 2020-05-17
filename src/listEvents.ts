@@ -1,17 +1,13 @@
-// @ts-check
+import { google } from "googleapis";
 
-const { google } = require("googleapis");
+import { monday, endOfWeek } from "./helpers";
+import calendars from "./calendars.json";
 
-const { monday, endOfWeek } = require("./helpers");
-const calendars = require("./calendars.json");
-
-/**
- * Lists the next 10 events on the user's primary calendar.
- * @param {any} auth An authorized OAuth2 client.
- * @param {string | undefined} person
- * @param {boolean} withEvents
- */
-function listEvents(auth, person = undefined, withEvents = false) {
+function listEvents(
+  auth: any,
+  person: string | undefined = undefined,
+  withEvents: boolean = false
+) {
   const calendar = google.calendar({ version: "v3", auth });
 
   return Promise.all(
@@ -34,11 +30,11 @@ function listEvents(auth, person = undefined, withEvents = false) {
         });
         const events = res.data.items;
 
-        if (events.length) {
+        if (events) {
           const formatted = events.map((event, i) => {
-            if (event.start.date) {
+            if (event.start?.date) {
               const start = new Date(event.start.date);
-              const end = new Date(event.end.date);
+              const end = new Date(event.end?.date || "");
               const time = (end.getTime() - start.getTime()) / 1000 / 60;
               const days = time / 60 / 24;
 
@@ -53,8 +49,8 @@ function listEvents(auth, person = undefined, withEvents = false) {
               };
             }
 
-            const start = new Date(event.start.dateTime);
-            const end = new Date(event.end.dateTime);
+            const start = new Date(event.start?.dateTime || "");
+            const end = new Date(event.end?.dateTime || "");
             const time = (end.getTime() - start.getTime()) / 1000 / 60;
 
             return {
@@ -107,4 +103,4 @@ function listEvents(auth, person = undefined, withEvents = false) {
   );
 }
 
-module.exports = listEvents;
+export default listEvents;

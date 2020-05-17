@@ -1,9 +1,9 @@
-const express = require("express");
-const cors = require("cors");
-const morgan = require("morgan");
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
 
-const { getAll, getPerson, getCalendars } = require("./lib");
-const calendars = require("./calendars.json");
+import { getAll, getPerson, getCalendars } from "./lib";
+import calendars from "./calendars.json";
 
 const people = Object.keys(calendars);
 
@@ -23,7 +23,7 @@ app.get("/api/gcal", (_req, res) => {
 app.get("/api/gcal/list", (_req, res) => {
   getCalendars()
     .then((out) => {
-      if (out !== null) {
+      if (out !== null && out.data.items) {
         res.json(
           out.data.items.map((item) => ({ name: item.summary, id: item.id }))
         );
@@ -39,6 +39,10 @@ app.get("/api/gcal/p/:person", (req, res) => {
   if (people.includes(person)) {
     return getPerson(person, true)
       .then((data) => {
+        if (!data) {
+          return res.status(404).json({});
+        }
+
         if (data.length !== 1) {
           return res.status(500).json({ err: "Error" });
         }
@@ -53,6 +57,10 @@ app.get("/api/gcal/p/:person", (req, res) => {
 
 app.get("/api/people", (_req, res) => {
   res.json(people);
+});
+
+app.get("/", (req, res) => {
+  res.send("Hello there<br/>General Kenobi");
 });
 
 app.listen(5000, () => {
