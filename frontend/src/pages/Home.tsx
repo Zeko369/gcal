@@ -43,9 +43,9 @@ const HomeData: React.FC = () => {
   );
 };
 
-const apiUrl = (path: string) => `http://localhost:5000/api/${path}`;
+const apiUrl = (path: string): string => `http://localhost:5000/api/${path}`;
 
-const prefetch = () => {
+const prefetch = (): Promise<void[]> => {
   return fetcher<string[]>(apiUrl("people")).then((data) =>
     Promise.all(
       data
