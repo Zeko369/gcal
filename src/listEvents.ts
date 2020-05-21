@@ -80,8 +80,8 @@ function listEvents(
           // console.log(formatTime(all));
           return {
             person,
-            all: all / 60,
-            soFar: soFar / 60,
+            all: Math.round((all / 60) * 100) / 100,
+            soFar: Math.round((soFar / 60) * 100) / 100,
             ...(withEvents
               ? {
                   formatted: formatted.map((item) => ({
