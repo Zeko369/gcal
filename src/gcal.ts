@@ -45,10 +45,6 @@ export const authenticatedWrapper = <A>(
   }
 };
 
-/**
- *
- * @param {any} oAuth2Client
- */
 async function getAccessToken(oAuth2Client: any) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",

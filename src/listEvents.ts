@@ -73,11 +73,6 @@ function listEvents(
             .filter((item) => !item.planned)
             .reduce((prev, curr) => prev + curr.time, 0);
 
-          // formatted.forEach((item) => {
-          //   console.log(item.summary, formatTime(item.time));
-          // });
-
-          // console.log(formatTime(all));
           return {
             person,
             all: Math.round((all / 60) * 100) / 100,
