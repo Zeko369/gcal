@@ -86,7 +86,7 @@ const prefetch = (): Promise<void[]> => {
 
 const Home: React.FC = () => {
   const [onlyMe, setOnlyMe] = useState(true);
-  const [sort, setSort] = useState<number | undefined>(undefined);
+  const [sort, setSort] = useState<number | undefined>(SortEnum.allDesc);
 
   useEffect(() => {
     prefetch()
@@ -103,7 +103,7 @@ const Home: React.FC = () => {
         <button style={{ fontSize: `1em` }} onClick={() => setOnlyMe((v) => !v)}>
           {onlyMe ? "Me" : "All"}
         </button>
-        <select onChange={(e) => setSort(parseInt(e.target.value) as any)}>
+        <select onChange={(e) => setSort(parseInt(e.target.value) as any)} value={sort}>
           <option value={undefined}></option>
           {Object.keys(SortEnum)
             .filter((a) => Number.isNaN(parseInt(a)))
