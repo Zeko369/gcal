@@ -3,10 +3,16 @@ import { Link, useParams } from "react-router-dom";
 import useSWR from "swr";
 
 import { Person } from "../Home";
-import Table from "../../components/Table";
+import Table from "../components/Table";
 
 export interface Response extends Person {
-  formatted: { allDay: boolean; summary: string; time: number; start: string; planned: boolean }[];
+  formatted: {
+    allDay: boolean;
+    summary: string;
+    time: number;
+    start: string;
+    planned: boolean;
+  }[];
 }
 
 const PersonData: React.FC<{ name: string }> = ({ name }) => {

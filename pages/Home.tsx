@@ -11,7 +11,7 @@ enum SortEnum {
   doneAsc,
   doneDesc,
   allAsc,
-  allDesc
+  allDesc,
 }
 
 export interface Person {
@@ -21,7 +21,10 @@ export interface Person {
 }
 type Data = Person[];
 
-const sortFunction = (sort?: SortEnum | undefined) => (a: Person, b: Person) => {
+const sortFunction = (sort?: SortEnum | undefined) => (
+  a: Person,
+  b: Person
+) => {
   if (sort === undefined) {
     return 0;
   }
@@ -33,7 +36,10 @@ const sortFunction = (sort?: SortEnum | undefined) => (a: Person, b: Person) => 
   return (a.soFar > b.soFar ? 1 : -1) * (sort === SortEnum.doneAsc ? 1 : -1);
 };
 
-const HomeData: React.FC<{ onlyMe: boolean; sort?: SortEnum }> = ({ onlyMe, sort }) => {
+const HomeData: React.FC<{ onlyMe: boolean; sort?: SortEnum }> = ({
+  onlyMe,
+  sort,
+}) => {
   const { data } = useSWR<Data>("http://localhost:5000/api/gcal");
 
   const rows = (data || [])
@@ -100,10 +106,16 @@ const Home: React.FC = () => {
         <h1>Calendar app</h1>
       </nav>
       <main>
-        <button style={{ fontSize: `1em` }} onClick={() => setOnlyMe((v) => !v)}>
+        <button
+          style={{ fontSize: `1em` }}
+          onClick={() => setOnlyMe((v) => !v)}
+        >
           {onlyMe ? "Me" : "All"}
         </button>
-        <select onChange={(e) => setSort(parseInt(e.target.value) as any)} value={sort}>
+        <select
+          onChange={(e) => setSort(parseInt(e.target.value) as any)}
+          value={sort}
+        >
           <option value={undefined}></option>
           {Object.keys(SortEnum)
             .filter((a) => Number.isNaN(parseInt(a)))
