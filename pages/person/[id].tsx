@@ -1,9 +1,10 @@
 import React, { Suspense } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import useSWR from "swr";
 
-import { Person } from "../Home";
-import Table from "../components/Table";
+import { Person } from "../index";
+import Table from "../../components/Table";
 
 export interface Response extends Person {
   formatted: {
@@ -16,7 +17,7 @@ export interface Response extends Person {
 }
 
 const PersonData: React.FC<{ name: string }> = ({ name }) => {
-  const { data } = useSWR<Response>(`http://localhost:5000/api/gcal/p/${name}`);
+  const { data } = useSWR<Response>(`/api/gcal/p/${name}`);
 
   return (
     <>
@@ -60,15 +61,27 @@ const PersonData: React.FC<{ name: string }> = ({ name }) => {
   );
 };
 
+const wrap = (param: string | string[] | undefined) =>
+  Array.isArray(param) ? param[0] : param;
+
 const PersonShow: React.FC = () => {
-  const { name } = useParams<{ name: string }>();
+  const router = useRouter();
+  const name = wrap(router.query.id);
+
+  if (typeof window === "undefined") {
+    return null;
+  }
 
   return (
     <div>
-      <Link to="/">Home</Link>
-      <Suspense fallback={<h1>Loading...</h1>}>
-        <PersonData name={name} />
-      </Suspense>
+      <Link href="/">Home</Link>
+      {name ? (
+        <Suspense fallback={<h1>Loading...</h1>}>
+          <PersonData name={name} />
+        </Suspense>
+      ) : (
+        <h1>Name missing</h1>
+      )}
     </div>
   );
 };

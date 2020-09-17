@@ -1,7 +1,7 @@
 import { google } from "googleapis";
 
 import { monday, endOfWeek } from "./helpers";
-import calendars from "./calendars.json";
+import calendars from "../data/calendars.json";
 
 function listEvents(
   auth: any,

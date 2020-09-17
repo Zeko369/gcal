@@ -11,14 +11,14 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = resolve("./src/token.json");
+const TOKEN_PATH = resolve(process.cwd(), "./keys/token.json");
 
 export const authenticatedWrapper = <A>(
   callback: (auth: any) => Promise<A>
 ): (() => Promise<A | null>) => async () => {
   try {
     const content = await fs.promises.readFile(
-      resolve("./src/credentials.json"),
+      resolve(process.cwd(), "./keys/credentials.json"),
       "utf-8"
     );
 
