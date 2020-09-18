@@ -1,7 +1,9 @@
+import React from "react"
 import { AppProps, ErrorComponent, useRouter } from "blitz"
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
 import { queryCache } from "react-query"
 import LoginForm from "app/auth/components/LoginForm"
+import { ChakraProvider } from "@chakra-ui/core"
 
 export default function App({ Component, pageProps }: AppProps) {
   const getLayout = Component.getLayout || ((page) => page)
@@ -17,7 +19,7 @@ export default function App({ Component, pageProps }: AppProps) {
         queryCache.resetErrorBoundaries()
       }}
     >
-      {getLayout(<Component {...pageProps} />)}
+      <ChakraProvider resetCSS>{getLayout(<Component {...pageProps} />)}</ChakraProvider>
     </ErrorBoundary>
   )
 }
