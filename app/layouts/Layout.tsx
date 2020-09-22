@@ -1,9 +1,39 @@
-import { ReactNode } from "react"
+import React, { ReactNode, Suspense } from "react"
 import { Head } from "blitz"
+import { HStack, Flex, Container, Heading, Avatar, Button, Spinner } from "@chakra-ui/core"
+import { useCurrentUser } from "app/hooks/useCurrentUser"
+import { LinkButton } from "app/components/Link"
+import logout from "app/auth/mutations/logout"
 
 type LayoutProps = {
   title?: string
   children: ReactNode
+}
+
+const User: React.FC = () => {
+  const currentUser = useCurrentUser()
+
+  return currentUser ? (
+    <HStack alignItems="center">
+      <Button onClick={async () => await logout()}>Logout</Button>
+      <Avatar name={currentUser.name || ""} />
+    </HStack>
+  ) : (
+    <HStack>
+      <LinkButton href="/login">Login</LinkButton>
+    </HStack>
+  )
+}
+
+const Nav = () => {
+  return (
+    <Flex p="2" bg="#1a73e8" justify="space-between">
+      <Heading color="white">Gcal thingy</Heading>
+      <Suspense fallback={<Spinner />}>
+        <User />
+      </Suspense>
+    </Flex>
+  )
 }
 
 const Layout = ({ title, children }: LayoutProps) => {
@@ -14,7 +44,9 @@ const Layout = ({ title, children }: LayoutProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {children}
+      <Nav />
+
+      <Container mt="2">{children}</Container>
     </>
   )
 }
