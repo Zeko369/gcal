@@ -1,7 +1,10 @@
 import React, { Suspense } from "react"
 import Layout from "app/layouts/Layout"
-import { Head, Link, usePaginatedQuery, useRouter, BlitzPage } from "blitz"
+import { Head, usePaginatedQuery, useRouter, BlitzPage } from "blitz"
 import getCalendars from "app/calendars/queries/getCalendars"
+import { Box, Button, Flex, Heading, UnorderedList, ListItem } from "@chakra-ui/core"
+import { AddIcon } from "@chakra-ui/icons"
+import { LinkIconButton, Link } from "app/components/Link"
 
 const ITEMS_PER_PAGE = 100
 
@@ -18,48 +21,45 @@ export const CalendarsList = () => {
   const goToNextPage = () => router.push({ query: { page: page + 1 } })
 
   return (
-    <div>
-      <ul>
+    <>
+      <UnorderedList my="4">
         {calendars.map((calendar) => (
-          <li key={calendar.id}>
+          <ListItem key={calendar.id}>
             <Link href="/calendars/[calendarId]" as={`/calendars/${calendar.id}`}>
-              <a>{calendar.name}</a>
+              {calendar.name}
             </Link>
-          </li>
+          </ListItem>
         ))}
-      </ul>
+      </UnorderedList>
 
-      <button disabled={page === 0} onClick={goToPreviousPage}>
+      <Button isDisabled={page === 0} onClick={goToPreviousPage}>
         Previous
-      </button>
-      <button disabled={!hasMore} onClick={goToNextPage}>
+      </Button>
+      <Button isDisabled={!hasMore} onClick={goToNextPage}>
         Next
-      </button>
-    </div>
+      </Button>
+    </>
   )
 }
 
 const CalendarsPage: BlitzPage = () => {
   return (
-    <div>
+    <>
       <Head>
         <title>Calendars</title>
       </Head>
 
-      <main>
-        <h1>Calendars</h1>
+      <Flex justify="space-between">
+        <Heading>Calendars</Heading>
+        <Box>
+          <LinkIconButton href="/calendars/new" icon={<AddIcon />} aria-label="new calendar" />
+        </Box>
+      </Flex>
 
-        <p>
-          <Link href="/calendars/new">
-            <a>Create Calendar</a>
-          </Link>
-        </p>
-
-        <Suspense fallback={<div>Loading...</div>}>
-          <CalendarsList />
-        </Suspense>
-      </main>
-    </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <CalendarsList />
+      </Suspense>
+    </>
   )
 }
 

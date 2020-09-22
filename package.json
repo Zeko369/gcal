@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@chakra-ui/core": "1.0.0-rc.3",
+    "@chakra-ui/icons": "1.0.0-rc.3",
     "@prisma/cli": "2.7.1",
     "@prisma/client": "2.7.1",
     "blitz": "0.22.1",

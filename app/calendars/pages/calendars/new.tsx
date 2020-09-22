@@ -1,18 +1,32 @@
-import React from "react"
+import React, { Suspense, useState } from "react"
+import { Head, useRouter, BlitzPage } from "blitz"
+import { Spinner, Heading } from "@chakra-ui/core"
 import Layout from "app/layouts/Layout"
-import { Head, Link, useRouter, BlitzPage } from "blitz"
-import createCalendar from "../../mutations/createCalendar"
+import { ListGcal } from "app/calendars/components/ListGcal"
 import { CalendarForm, CalendarFormData } from "../../components/CalendarForm"
+import createCalendar from "../../mutations/createCalendar"
+import { Link } from "app/components/Link"
 
 const NewCalendarPage: BlitzPage = () => {
   const router = useRouter()
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const onSubmit = async (data: CalendarFormData) => {
     try {
-      const calendar = await createCalendar({ data })
+      if (!selectedId) {
+        return
+      }
+
+      const calendar = await createCalendar({ data: { ...data, uuid: selectedId } })
       router.push("/calendars/[calendarId]", `/calendars/${calendar.id}`)
     } catch (error) {
       alert("Error creating calendar " + JSON.stringify(error, null, 2))
+    }
+  }
+
+  const select = (id: string | undefined | null) => {
+    return () => {
+      id && setSelectedId((curr) => (curr === id ? null : id))
     }
   }
 
@@ -22,15 +36,15 @@ const NewCalendarPage: BlitzPage = () => {
         <title>New Calendar</title>
       </Head>
 
-      <h1>Create New Calendar</h1>
+      <Heading>Create New Calendar</Heading>
 
-      <CalendarForm onSubmit={onSubmit} />
+      <Link href="/calendars">Calendars</Link>
 
-      <p>
-        <Link href="/calendars">
-          <a>Calendars</a>
-        </Link>
-      </p>
+      <CalendarForm onSubmit={onSubmit} disabled={!selectedId}>
+        <Suspense fallback={<Spinner />}>
+          <ListGcal selectedId={selectedId} select={select} />
+        </Suspense>
+      </CalendarForm>
     </div>
   )
 }

@@ -9,18 +9,30 @@ export interface CalendarFormData {
 
 interface CalendarFormProps {
   initialValues?: Partial<CalendarFormData>
+  disabled?: boolean
   onSubmit: (data: CalendarFormData) => Promise<void>
   update?: boolean
 }
 
-export const CalendarForm = ({ initialValues, update, onSubmit }: CalendarFormProps) => {
-  const { register, handleSubmit } = useForm<CalendarFormData>({ defaultValues: initialValues })
+export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
+  const { initialValues, update, onSubmit, children, disabled } = props
+  const { register, handleSubmit, formState } = useForm<CalendarFormData>({
+    defaultValues: initialValues,
+  })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack>
         <Field name="name" ref={register({ required: true })} isRequired />
-        <Button type="submit">{update ? "Update" : "Create"}</Button>
+        {children}
+        <Button
+          colorScheme="green"
+          type="submit"
+          isDisabled={disabled}
+          isLoading={formState.isSubmitting}
+        >
+          {update ? "Update" : "Create"}
+        </Button>
       </Stack>
     </form>
   )

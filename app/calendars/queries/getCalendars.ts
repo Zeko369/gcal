@@ -12,7 +12,12 @@ const getCalendars = async (input: GetCalendarsInput, ctx: Ctx = {}) => {
   ctx.session!.authorize()
 
   const { where, orderBy, skip = 0, take } = input
-  const calendars = await db.calendar.findMany({ where, orderBy, take, skip })
+  const calendars = await db.calendar.findMany({
+    where: { ...where, userId: ctx.session!.userId },
+    orderBy,
+    take,
+    skip,
+  })
 
   const count = await db.calendar.count()
   const hasMore = typeof take === "number" ? skip + take < count : false
