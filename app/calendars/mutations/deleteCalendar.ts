@@ -1,17 +1,14 @@
-import { SessionContext } from "blitz"
+import { Ctx } from "app/ts"
 import db, { CalendarDeleteArgs } from "db"
 
 type DeleteCalendarInput = {
   where: CalendarDeleteArgs["where"]
 }
-
-export default async function deleteCalendar(
-  { where }: DeleteCalendarInput,
-  ctx: { session?: SessionContext } = {}
-) {
+const deleteCalendar = async ({ where }: DeleteCalendarInput, ctx: Ctx = {}) => {
   ctx.session!.authorize()
 
   const calendar = await db.calendar.delete({ where })
-
   return calendar
 }
+
+export default deleteCalendar

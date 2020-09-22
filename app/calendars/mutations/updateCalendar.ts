@@ -1,18 +1,15 @@
-import { SessionContext } from "blitz"
+import { Ctx } from "app/ts"
 import db, { CalendarUpdateArgs } from "db"
 
 type UpdateCalendarInput = {
   where: CalendarUpdateArgs["where"]
   data: CalendarUpdateArgs["data"]
 }
-
-export default async function updateCalendar(
-  { where, data }: UpdateCalendarInput,
-  ctx: { session?: SessionContext } = {}
-) {
+const updateCalendar = async ({ where, data }: UpdateCalendarInput, ctx: Ctx = {}) => {
   ctx.session!.authorize()
 
   const calendar = await db.calendar.update({ where, data })
-
   return calendar
 }
+
+export default updateCalendar

@@ -1,4 +1,4 @@
-import { SessionContext } from "blitz"
+import { Ctx } from "app/ts"
 import db, { FindManyCalendarArgs } from "db"
 
 type GetCalendarsInput = {
@@ -6,30 +6,19 @@ type GetCalendarsInput = {
   orderBy?: FindManyCalendarArgs["orderBy"]
   skip?: FindManyCalendarArgs["skip"]
   take?: FindManyCalendarArgs["take"]
-  // Only available if a model relationship exists
-  // include?: FindManyCalendarArgs['include']
 }
 
-export default async function getCalendars(
-  { where, orderBy, skip = 0, take }: GetCalendarsInput,
-  ctx: { session?: SessionContext } = {}
-) {
+const getCalendars = async (input: GetCalendarsInput, ctx: Ctx = {}) => {
   ctx.session!.authorize()
 
-  const calendars = await db.calendar.findMany({
-    where,
-    orderBy,
-    take,
-    skip,
-  })
+  const { where, orderBy, skip = 0, take } = input
+  const calendars = await db.calendar.findMany({ where, orderBy, take, skip })
 
   const count = await db.calendar.count()
   const hasMore = typeof take === "number" ? skip + take < count : false
   const nextPage = hasMore ? { take, skip: skip + take! } : null
 
-  return {
-    calendars,
-    nextPage,
-    hasMore,
-  }
+  return { calendars, nextPage, hasMore }
 }
+
+export default getCalendars
