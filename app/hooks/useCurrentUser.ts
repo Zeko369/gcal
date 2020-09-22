@@ -1,5 +1,5 @@
 import { useQuery, useSession } from "blitz"
-import getCurrentUser from "app/users/queries/getCurrentUser"
+import getCurrentUser from "app/queries/getCurrentUser"
 
 export interface CurrentUser {
   id: number
