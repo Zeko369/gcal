@@ -1,23 +1,27 @@
+import { Button, Stack } from "@chakra-ui/core"
+import { Field } from "app/components/Field"
 import React from "react"
+import { useForm } from "react-hook-form"
 
-type CalendarFormProps = {
-  initialValues: any
-  onSubmit: React.FormEventHandler<HTMLFormElement>
+export interface CalendarFormData {
+  name: string
 }
 
-const CalendarForm = ({ initialValues, onSubmit }: CalendarFormProps) => {
+interface CalendarFormProps {
+  initialValues?: Partial<CalendarFormData>
+  onSubmit: (data: CalendarFormData) => Promise<void>
+  update?: boolean
+}
+
+export const CalendarForm = ({ initialValues, update, onSubmit }: CalendarFormProps) => {
+  const { register, handleSubmit } = useForm<CalendarFormData>({ defaultValues: initialValues })
+
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault()
-        onSubmit(event)
-      }}
-    >
-      <div>Put your form fields here. But for now, just click submit</div>
-      <div>{JSON.stringify(initialValues)}</div>
-      <button>Submit</button>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack>
+        <Field name="name" ref={register({ required: true })} isRequired />
+        <Button type="submit">{update ? "Update" : "Create"}</Button>
+      </Stack>
     </form>
   )
 }
-
-export default CalendarForm
