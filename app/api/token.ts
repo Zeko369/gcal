@@ -1,5 +1,6 @@
 import { BlitzApiRequest, BlitzApiResponse } from "blitz"
 import { getClient } from "app/lib/new/gcal"
+import db from "db"
 
 const tokenHandler = async (req: BlitzApiRequest, res: BlitzApiResponse) => {
   const { code, state } = req.query
@@ -9,8 +10,25 @@ const tokenHandler = async (req: BlitzApiRequest, res: BlitzApiResponse) => {
   }
 
   const { tokens } = await getClient().getToken(code)
+  const { token, userId } = JSON.parse(state)
 
-  res.json({ tokens, state })
+  if (!token || !userId) {
+    throw new Error("Token or userId missing")
+  }
+
+  const user = await db.user.findOne({ where: { id: userId } })
+
+  if (!user) {
+    throw new Error("Wrong userId")
+  }
+
+  if (user.googleTokenRef !== token) {
+    throw new Error("Wrong token")
+  }
+
+  await db.user.update({ where: { id: userId }, data: { googleToken: JSON.stringify(tokens) } })
+
+  res.redirect("/")
 }
 
 export default tokenHandler
