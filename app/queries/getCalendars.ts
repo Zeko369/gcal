@@ -15,8 +15,6 @@ const getCalendars = async (input?: any, ctx: { session?: SessionContext } = {})
   const client = getClient()
   client.setCredentials(JSON.parse(user.googleToken))
 
-  console.log(`here`)
-
   const calendar = google.calendar({ version: "v3", auth: client })
   const calendars = await calendar.calendarList.list()
 

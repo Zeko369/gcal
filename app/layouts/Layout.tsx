@@ -2,7 +2,7 @@ import React, { ReactNode, Suspense } from "react"
 import { Head } from "blitz"
 import { HStack, Flex, Container, Heading, Avatar, Button, Spinner } from "@chakra-ui/core"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
-import { LinkButton } from "app/components/Link"
+import { Link, LinkButton } from "app/components/Link"
 import logout from "app/auth/mutations/logout"
 
 type LayoutProps = {
@@ -28,7 +28,9 @@ const User: React.FC = () => {
 const Nav = () => {
   return (
     <Flex p="2" bg="#1a73e8" justify="space-between">
-      <Heading color="white">Gcal thingy</Heading>
+      <Link href="/">
+        <Heading color="white">Gcal thingy</Heading>
+      </Link>
       <Suspense fallback={<Spinner />}>
         <User />
       </Suspense>

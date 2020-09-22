@@ -1,61 +1,42 @@
 import React, { Suspense } from "react"
-import { BlitzPage, useRouter, useQuery } from "blitz"
-import { Button, Container, Spinner, Heading, List, ListItem } from "@chakra-ui/core"
+import { BlitzPage, useQuery } from "blitz"
+import { Spinner, Heading, Box, Wrap } from "@chakra-ui/core"
 
-import { useCurrentUser, CurrentUser } from "app/hooks/useCurrentUser"
-import getCalendars from "app/queries/getCalendars"
-import googleAuth from "app/mutations/googleAuth"
+import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
+import getCalendarsDB from "app/calendars/queries/getCalendars"
 
-const LoggedIn: React.FC<{ currentUser: CurrentUser }> = ({ currentUser }) => {
-  const router = useRouter()
+const HomePage: React.FC = () => {
+  const [{ calendars }] = useQuery(getCalendarsDB, {})
 
-  const auth = async () => {
-    const authorizeUrl = await googleAuth()
-    router.push(authorizeUrl)
-  }
-
-  const [calendars] = useQuery(getCalendars, {})
-
-  return calendars.ok ? (
-    <>
-      <Heading size="sm">Calendars: </Heading>
-      <List>
-        {calendars.data?.data.items?.map((calendar) => (
-          <ListItem key={calendar.id}>{calendar.summary}</ListItem>
-        ))}
-      </List>
-    </>
-  ) : (
-    <>
-      <Heading size="sm">Token probably wrong</Heading>
-      <Button onClick={auth}>Google auth</Button>
-    </>
+  return (
+    <Wrap>
+      {calendars.map((calendar) => (
+        <Box p={4} shadow="md" borderWidth="1px" key={calendar.id} w="250px">
+          <Heading size="md">{calendar.name}</Heading>
+        </Box>
+      ))}
+    </Wrap>
   )
 }
 
-const UserInfo: React.FC = () => {
+const Main: React.FC = () => {
   const currentUser = useCurrentUser()
 
-  return (
-    <Container>
-      {currentUser ? (
-        <Suspense fallback={<Spinner />}>
-          <LoggedIn currentUser={currentUser} />
-        </Suspense>
-      ) : (
-        <>
-          <Heading>Welcome to GCAL app</Heading>
-        </>
-      )}
-    </Container>
+  return currentUser ? (
+    <HomePage />
+  ) : (
+    <>
+      <Heading>Welcome to GCAL app</Heading>
+      <Heading size="lg">Go login</Heading>
+    </>
   )
 }
 
 const Home: BlitzPage = () => {
   return (
     <Suspense fallback={() => <Spinner />}>
-      <UserInfo />
+      <Main />
     </Suspense>
   )
 }
