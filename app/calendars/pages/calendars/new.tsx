@@ -5,7 +5,7 @@ import Layout from "app/layouts/Layout"
 import { ListGcal } from "app/calendars/components/ListGcal"
 import { CalendarForm, CalendarFormData } from "../../components/CalendarForm"
 import createCalendar from "../../mutations/createCalendar"
-import { Link } from "app/components/Link"
+import { Link } from "chakra-next-link"
 
 const NewCalendarPage: BlitzPage = () => {
   const router = useRouter()

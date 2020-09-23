@@ -1,6 +1,7 @@
 import React, { Suspense } from "react"
 import Layout from "app/layouts/Layout"
-import { Head, Link, useRouter, useQuery, useParam, BlitzPage } from "blitz"
+import { Head, useRouter, useQuery, useParam, BlitzPage } from "blitz"
+import { Link } from "chakra-next-link"
 import getCalendar from "app/calendars/queries/getCalendar"
 import updateCalendar from "app/calendars/mutations/updateCalendar"
 import { CalendarForm, CalendarFormData } from "app/calendars/components/CalendarForm"
@@ -45,9 +46,7 @@ const EditCalendarPage: BlitzPage = () => {
         </Suspense>
 
         <p>
-          <Link href="/calendars">
-            <a>Calendars</a>
-          </Link>
+          <Link href="/calendars">Calendars</Link>
         </p>
       </main>
     </div>

@@ -1,8 +1,8 @@
 import React, { ReactNode, Suspense } from "react"
 import { Head } from "blitz"
 import { HStack, Flex, Container, Heading, Avatar, Button, Spinner } from "@chakra-ui/core"
+import { Link, LinkButton } from "chakra-next-link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
-import { Link, LinkButton } from "app/components/Link"
 import logout from "app/auth/mutations/logout"
 
 type LayoutProps = {

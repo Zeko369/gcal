@@ -4,8 +4,7 @@ import { Head, usePaginatedQuery, useRouter, BlitzPage } from "blitz"
 import getCalendars from "app/calendars/queries/getCalendars"
 import { Box, Button, Flex, Heading, UnorderedList, ListItem } from "@chakra-ui/core"
 import { AddIcon } from "@chakra-ui/icons"
-import { LinkIconButton, Link } from "app/components/Link"
-
+import { Link, LinkIconButton } from "chakra-next-link"
 const ITEMS_PER_PAGE = 100
 
 export const CalendarsList = () => {

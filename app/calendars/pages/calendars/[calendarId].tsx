@@ -1,6 +1,7 @@
 import React, { Suspense } from "react"
 import Layout from "app/layouts/Layout"
-import { Head, Link, useRouter, useQuery, useParam, BlitzPage } from "blitz"
+import { Head, useRouter, useQuery, useParam, BlitzPage } from "blitz"
+import { Link } from "chakra-next-link"
 import getCalendar from "app/calendars/queries/getCalendar"
 import deleteCalendar from "app/calendars/mutations/deleteCalendar"
 
@@ -15,7 +16,7 @@ export const Calendar = () => {
       <pre>{JSON.stringify(calendar, null, 2)}</pre>
 
       <Link href="/calendars/[calendarId]/edit" as={`/calendars/${calendar.id}/edit`}>
-        <a>Edit</a>
+        Edit
       </Link>
 
       <button
@@ -42,9 +43,7 @@ const ShowCalendarPage: BlitzPage = () => {
 
       <main>
         <p>
-          <Link href="/calendars">
-            <a>Calendars</a>
-          </Link>
+          <Link href="/calendars">Calendars</Link>
         </p>
 
         <Suspense fallback={<div>Loading...</div>}>
