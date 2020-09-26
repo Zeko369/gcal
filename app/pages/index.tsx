@@ -19,6 +19,8 @@ import { Calendar } from "@prisma/client"
 import { Link, LinkIconButton } from "chakra-next-link"
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons"
 
+const format = (n: number) => Math.round(n * 100) / 100
+
 const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
   const [{ data }] = useQuery(getEvents, { calendarId: calendar.uuid })
 
@@ -35,7 +37,7 @@ const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
       <Text size="md">
         Hours:{" "}
         <strong>
-          {data.soFar / 60}h [{data.all / 60}]
+          {format(data.soFar / 60)}h [{format(data.all / 60)}]
         </strong>
       </Text>
       <Text>Count: {data.formatted.length}</Text>
