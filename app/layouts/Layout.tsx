@@ -25,7 +25,21 @@ const User: React.FC = () => {
   )
 }
 
-const Nav = () => {
+const Links: React.FC = () => {
+  const user = useCurrentUser()
+
+  return user ? (
+    <HStack justify="center">
+      <Link href="/calendars" color="white" _activeLink={{ fontWeight: "bold" }}>
+        Calendars
+      </Link>
+    </HStack>
+  ) : (
+    <Box />
+  )
+}
+
+const Nav: React.FC = () => {
   return (
     <Grid p="2" bg="#1a73e8" templateColumns="repeat(3, 1fr)" gap={6}>
       <Box>
@@ -34,11 +48,9 @@ const Nav = () => {
         </Link>
       </Box>
 
-      <HStack justify="center">
-        <Link href="/calendars" color="white" _activeLink={{ fontWeight: "bold" }}>
-          Calendars
-        </Link>
-      </HStack>
+      <Suspense fallback={() => null}>
+        <Links />
+      </Suspense>
 
       <Flex justifyContent="flex-end">
         <Suspense fallback={<Spinner />}>
@@ -59,7 +71,7 @@ const Layout = ({ title, children }: LayoutProps) => {
 
       <Nav />
 
-      <Box w="800px" maxW="80%" m="0 auto" mt="2">
+      <Box w="1000px" maxW="90%" m="0 auto" mt="2">
         {children}
       </Box>
     </>
