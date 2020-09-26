@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from "@emotion/styled"
 
 const Table = styled.table`
   td,
@@ -13,6 +13,6 @@ const Table = styled.table`
     font-size: 1.5em;
     font-weight: 700;
   }
-`;
+`
 
-export default Table;
+export default Table

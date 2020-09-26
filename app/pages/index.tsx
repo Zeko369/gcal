@@ -16,7 +16,7 @@ import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
 import getEvents from "app/queries/getEvents"
 import { Calendar } from "@prisma/client"
-import { LinkIconButton } from "chakra-next-link"
+import { Link, LinkIconButton } from "chakra-next-link"
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons"
 
 const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
@@ -51,7 +51,9 @@ const HomePage: React.FC = () => {
       {calendars.map((calendar) => (
         <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
           <Flex justify="space-between" w="100%">
-            <Heading size="lg">{calendar.name}</Heading>
+            <Link href="/calendars/[id]" as={`/calendars/${calendar.id}`}>
+              <Heading size="lg">{calendar.name}</Heading>
+            </Link>
             <HStack>
               <LinkIconButton
                 size="xs"

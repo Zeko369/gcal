@@ -4,7 +4,9 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang="en">
-        <DocumentHead />
+        <DocumentHead>
+          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        </DocumentHead>
         <body>
           <Main />
           <BlitzScript />
