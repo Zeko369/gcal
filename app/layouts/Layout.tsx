@@ -1,6 +1,6 @@
 import React, { ReactNode, Suspense } from "react"
 import { Head } from "blitz"
-import { HStack, Flex, Container, Heading, Avatar, Button, Spinner } from "@chakra-ui/core"
+import { HStack, Flex, Box, Heading, Avatar, Button, Spinner, Grid } from "@chakra-ui/core"
 import { Link, LinkButton } from "chakra-next-link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import logout from "app/auth/mutations/logout"
@@ -27,14 +27,25 @@ const User: React.FC = () => {
 
 const Nav = () => {
   return (
-    <Flex p="2" bg="#1a73e8" justify="space-between">
-      <Link href="/">
-        <Heading color="white">Gcal thingy</Heading>
-      </Link>
-      <Suspense fallback={<Spinner />}>
-        <User />
-      </Suspense>
-    </Flex>
+    <Grid p="2" bg="#1a73e8" templateColumns="repeat(3, 1fr)" gap={6}>
+      <Box>
+        <Link href="/">
+          <Heading color="white">Gcal thingy</Heading>
+        </Link>
+      </Box>
+
+      <HStack justify="center">
+        <Link href="/calendars" color="white" _activeLink={{ fontWeight: "bold" }}>
+          Calendars
+        </Link>
+      </HStack>
+
+      <Flex justifyContent="flex-end">
+        <Suspense fallback={<Spinner />}>
+          <User />
+        </Suspense>
+      </Flex>
+    </Grid>
   )
 }
 
@@ -48,7 +59,9 @@ const Layout = ({ title, children }: LayoutProps) => {
 
       <Nav />
 
-      <Container mt="2">{children}</Container>
+      <Box w="800px" maxW="80%" m="0 auto" mt="2">
+        {children}
+      </Box>
     </>
   )
 }
