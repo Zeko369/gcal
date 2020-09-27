@@ -1,13 +1,16 @@
 import { google } from "googleapis"
-import { getClient } from "app/lib/new/gcal"
+import { getClient } from "app/lib/gcal"
 import { SessionContext } from "blitz"
 import db from "db"
-import { endOfWeek, monday } from "app/lib/helpers"
+import { endOfMonth, firstOfMonth } from "app/lib/helpers"
 
-const getEvents = async (
-  { calendarId }: { calendarId: string },
-  ctx: { session?: SessionContext } = {}
-) => {
+interface GetEventsInput {
+  calendarId: string
+  timeMin?: Date
+  timeMax?: Date
+}
+
+const getEvents = async (input: GetEventsInput, ctx: { session?: SessionContext } = {}) => {
   const userId = ctx.session?.userId as number
 
   const user = await db.user.findOne({ where: { id: userId } })
@@ -16,15 +19,17 @@ const getEvents = async (
     return { ok: false }
   }
 
+  const { calendarId, timeMin, timeMax } = input
+
   const client = getClient()
   client.setCredentials(JSON.parse(user.googleToken))
 
   const calendar = google.calendar({ version: "v3", auth: client })
   const events = await calendar.events.list({
     calendarId,
-    maxResults: 100,
-    timeMin: monday().toISOString(),
-    timeMax: endOfWeek().toISOString(),
+    maxResults: 1000,
+    timeMin: (timeMin || firstOfMonth()).toISOString(),
+    timeMax: (timeMax || endOfMonth()).toISOString(),
     singleEvents: true,
     orderBy: "startTime",
   })

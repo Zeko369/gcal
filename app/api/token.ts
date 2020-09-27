@@ -1,5 +1,5 @@
 import { BlitzApiRequest, BlitzApiResponse } from "blitz"
-import { getClient } from "app/lib/new/gcal"
+import { getClient } from "app/lib/gcal"
 import db from "db"
 
 const tokenHandler = async (req: BlitzApiRequest, res: BlitzApiResponse) => {

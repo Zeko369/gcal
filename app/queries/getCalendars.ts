@@ -1,5 +1,5 @@
 import { google } from "googleapis"
-import { getClient } from "app/lib/new/gcal"
+import { getClient } from "app/lib/gcal"
 import { SessionContext } from "blitz"
 import db from "db"
 

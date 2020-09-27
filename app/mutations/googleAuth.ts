@@ -1,4 +1,4 @@
-import { getClient, scopes } from "app/lib/new/gcal"
+import { getClient, scopes } from "app/lib/gcal"
 import { SessionContext } from "blitz"
 import { nanoid } from "nanoid"
 import db from "db"
