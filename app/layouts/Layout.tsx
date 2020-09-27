@@ -1,5 +1,5 @@
 import React, { ReactNode, Suspense } from "react"
-import { Head } from "blitz"
+import { Head, useSession } from "blitz"
 import { HStack, Flex, Box, Heading, Avatar, Button, Spinner, Grid } from "@chakra-ui/core"
 import { Link, LinkButton } from "chakra-next-link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
@@ -26,9 +26,9 @@ const User: React.FC = () => {
 }
 
 const Links: React.FC = () => {
-  const user = useCurrentUser()
+  const { isLoading, userId } = useSession()
 
-  return user ? (
+  return !isLoading && userId ? (
     <HStack justify="center">
       <Link href="/calendars" color="white" _activeLink={{ fontWeight: "bold" }}>
         Calendars

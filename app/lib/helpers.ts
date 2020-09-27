@@ -1,6 +1,6 @@
 import { Scale, day } from "./reducer"
 
-export const firstOfWeek = (date = new Date()) => {
+export function firstOfWeek(date = new Date()) {
   let diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1)
   return new Date(date.setDate(diff) - (date.getTime() % (1000 * 60 * 60 * 24)))
 }
