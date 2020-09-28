@@ -3,7 +3,7 @@ import produce from "immer"
 import { startOfDay, startOfWeek, startOfMonth, startOfYear } from "date-fns"
 
 export type Scale = "day" | "week" | "month" | "year"
-type Action =
+export type Action =
   | { type: "setScale"; payload: { value: Scale } }
   | { type: "setValue"; payload: { value: Date } }
   | { type: "reset" }

@@ -41,12 +41,10 @@ const Links: React.FC = () => {
 
 const Nav: React.FC = () => {
   return (
-    <Grid p="2" bg="#1a73e8" templateColumns="repeat(3, 1fr)" gap={6}>
-      <Box>
-        <Link href="/">
-          <Heading color="white">Gcal thingy</Heading>
-        </Link>
-      </Box>
+    <Grid p="2" bg="#1a73e8" templateColumns="repeat(3, 1fr)" gap={6} alignItems="center">
+      <Link href="/">
+        <Heading color="white">Gcal</Heading>
+      </Link>
 
       <Suspense fallback={() => null}>
         <Links />
@@ -69,10 +67,17 @@ const Layout = ({ title, children }: LayoutProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Nav />
+      {/* Main */}
+      <Box as="main">
+        <Nav />
+        <Box w="1000px" maxW="90%" m="0 auto" my="4" pb="10">
+          {children}
+        </Box>
+      </Box>
 
-      <Box w="1000px" maxW="90%" m="0 auto" mt="2">
-        {children}
+      {/* Footer */}
+      <Box as="footer" bg="#000" py="4" textAlign="center">
+        Gcal app copyright Fran Zekan
       </Box>
     </>
   )

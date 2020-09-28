@@ -6,6 +6,16 @@ import LoginForm from "app/auth/components/LoginForm"
 import { ChakraProvider } from "@chakra-ui/core"
 import { initialState, reducer, StoreContext } from "app/lib/reducer"
 
+import { Global, css } from "@emotion/core"
+const globalStyles = css`
+  #__next {
+    min-height: 100vh;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+`
+
 export default function App({ Component, pageProps }: AppProps) {
   const getLayout = Component.getLayout || ((page) => page)
   const router = useRouter()
@@ -20,6 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
         queryCache.resetErrorBoundaries()
       }}
     >
+      <Global styles={globalStyles} />
       <ChakraProvider resetCSS>
         <StoreContext.Provider value={{ dispatch, state }}>
           {getLayout(<Component {...pageProps} />)}

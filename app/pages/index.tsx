@@ -13,6 +13,7 @@ import {
   Select,
   Button,
   Grid,
+  useBreakpointValue,
 } from "@chakra-ui/core"
 import { endOfWeek } from "date-fns"
 import { Calendar } from "@prisma/client"
@@ -23,7 +24,7 @@ import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
 import getEvents from "app/queries/getEvents"
-import { useStore, Scale, intervals } from "app/lib/reducer"
+import { useStore, Scale, intervals, Action } from "app/lib/reducer"
 import { timeMin, timeMax } from "app/lib/time"
 
 const format = (n: number) => Math.round(n * 100) / 100
@@ -72,6 +73,30 @@ const dFormat = (date: Date, scale: Scale) => {
   }
 }
 
+interface NavigationButtonProps {
+  label: string
+  Icon: React.ReactElement
+  action: "val++" | "val--"
+}
+
+const NavigationButton: React.FC<NavigationButtonProps> = ({ label, Icon, action }) => {
+  const { dispatch } = useStore()
+  const icon = useBreakpointValue({ base: 1, md: 0 })
+
+  return icon ? (
+    <IconButton
+      colorScheme="blue"
+      onClick={() => dispatch({ type: action })}
+      icon={Icon}
+      aria-label={label}
+    />
+  ) : (
+    <Button colorScheme="blue" onClick={() => dispatch({ type: "val--" })} leftIcon={Icon}>
+      {label}
+    </Button>
+  )
+}
+
 const HomePage: React.FC = () => {
   const [{ calendars }] = useQuery(getCalendarsDB, {})
   const { dispatch, state } = useStore()
@@ -92,13 +117,7 @@ const HomePage: React.FC = () => {
   return (
     <Box>
       <Grid templateColumns="1fr 2fr 1fr" gap={3}>
-        <Button
-          colorScheme="blue"
-          onClick={() => dispatch({ type: "val--" })}
-          leftIcon={<ArrowLeftIcon />}
-        >
-          Previous
-        </Button>
+        <NavigationButton label="Previous" Icon={<ArrowLeftIcon />} action="val--" />
         <Select mb="3" onChange={onChange} value={state.date.scale}>
           {intervals.map(({ key, label }) => (
             <option key={key} value={key}>
@@ -106,13 +125,7 @@ const HomePage: React.FC = () => {
             </option>
           ))}
         </Select>
-        <Button
-          colorScheme="blue"
-          onClick={() => dispatch({ type: "val++" })}
-          rightIcon={<ArrowRightIcon />}
-        >
-          Next
-        </Button>
+        <NavigationButton label="Next" Icon={<ArrowRightIcon />} action="val++" />
       </Grid>
       <Flex justify="space-between">
         <Heading size="lg" mb="2">
@@ -122,7 +135,7 @@ const HomePage: React.FC = () => {
           Reset
         </Button>
       </Flex>
-      <SimpleGrid columns={3} spacing={3}>
+      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3}>
         {calendars.map((calendar) => (
           <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
             <Flex justify="space-between" w="100%">
