@@ -20,7 +20,7 @@ module.exports = {
   deploy: {
     production: {
       user: "zeko",
-      host: "167.86.117.186",
+      host: "c2.zekan.tk",
       ref: "origin/master",
       repo: "git@github.com:Zeko369/gcal.git",
       path: "/home/zeko/deploy-gcal",
