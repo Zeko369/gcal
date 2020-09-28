@@ -1,9 +1,12 @@
 import React from "react"
-import { Box, Heading } from "@chakra-ui/core"
+import { Box, Heading, useColorModeValue } from "@chakra-ui/core"
 
 export const AuthLayout: React.FC = ({ children }) => {
+  const bg = useColorModeValue("blue.300", "gray.700")
+  const bgCard = useColorModeValue("white", "black")
+
   return (
-    <Box h="100vh" w="100wv" bg="blue.300">
+    <Box h="100vh" w="100wv" bg={bg}>
       <Box
         pos="absolute"
         top="30vh"
@@ -13,7 +16,7 @@ export const AuthLayout: React.FC = ({ children }) => {
         transform="translate(-50%, max(-50%, -20vh))"
       >
         <Heading mb="4">Gcal app</Heading>
-        <Box borderWidth="1px" rounded="lg" p="5" bg="white">
+        <Box borderWidth="1px" rounded="lg" p="5" bg={bgCard}>
           {children}
         </Box>
       </Box>

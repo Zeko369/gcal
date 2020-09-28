@@ -8,8 +8,15 @@ import { initialState, reducer, StoreContext } from "app/lib/reducer"
 
 import { Global, css } from "@emotion/core"
 const globalStyles = css`
+  html,
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
   #__next {
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
