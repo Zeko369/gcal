@@ -3,7 +3,7 @@ import { Link } from "chakra-next-link"
 import signup from "app/auth/mutations/signup"
 import { Button, Heading, Stack } from "@chakra-ui/core"
 import { useForm } from "react-hook-form"
-import Input from "app/components/Input"
+import { Input } from "app/components/Input"
 
 type SignUpFormProps = {
   onSuccess?: () => void

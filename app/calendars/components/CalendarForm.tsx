@@ -1,5 +1,5 @@
 import { Button, Stack } from "@chakra-ui/core"
-import { Field } from "app/components/Field"
+import { Input } from "app/components/Input"
 import React from "react"
 import { useForm } from "react-hook-form"
 
@@ -23,7 +23,7 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack>
-        <Field name="name" ref={register({ required: true })} isRequired />
+        <Input name="name" ref={register({ required: true })} isRequired />
         {children}
         <Button
           colorScheme="green"

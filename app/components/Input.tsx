@@ -30,7 +30,7 @@ const resoleType = (name: string): string | undefined => {
   }
 }
 
-const Input: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (props, ref) => {
+const InputComponent: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (props, ref) => {
   const { name, isInvalid, isRequired, error, label, placeholder, outerProps, ...rest } = props
 
   return (
@@ -49,4 +49,4 @@ const Input: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (props, re
   )
 }
 
-export default forwardRef(Input)
+export const Input = forwardRef(InputComponent)
