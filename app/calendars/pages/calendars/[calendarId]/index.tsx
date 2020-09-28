@@ -8,10 +8,10 @@ import Layout from "app/layouts/Layout"
 import getCalendar from "app/calendars/queries/getCalendar"
 import deleteCalendar from "app/calendars/mutations/deleteCalendar"
 import Table from "app/components/Table"
-import getEvents from "app/queries/getEvents"
+import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
 
 const EventData: React.FC<{ uuid: string }> = ({ uuid }) => {
-  const [{ data }] = useQuery(getEvents, { calendarId: uuid })
+  const [{ data }] = useQuery(getGoogleCalendarEvents, { calendarId: uuid })
 
   if (!data) {
     return (

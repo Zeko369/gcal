@@ -1,9 +1,9 @@
 import React, { useCallback } from "react"
-import googleAuth from "app/mutations/googleAuth"
 import { useRouter, useQuery } from "blitz"
 import { Heading, ListItem, Button, UnorderedList, Text } from "@chakra-ui/core"
-import getCalendars from "app/queries/getCalendars"
-import getCalendarsDB from "../queries/getCalendars"
+import googleAuth from "app/mutations/googleAuth"
+import getGoogleCalendars from "app/queries/getGoogleCalendars"
+import getCalendars from "app/calendars/queries/getCalendars"
 
 interface ListGcalProps {
   select: (id: string | null | undefined) => () => void
@@ -18,8 +18,8 @@ export const ListGcal: React.FC<ListGcalProps> = ({ select, selectedId }) => {
     router.push(authorizeUrl)
   }
 
-  const [googleCalendars] = useQuery(getCalendars, {})
-  const [dbCalendars] = useQuery(getCalendarsDB, {})
+  const [googleCalendars] = useQuery(getGoogleCalendars, {})
+  const [dbCalendars] = useQuery(getCalendars, {})
 
   const notExistsFilter = useCallback(
     (googleCal) => !dbCalendars.calendars.find((dbCal) => dbCal.uuid === googleCal.id),

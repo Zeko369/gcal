@@ -24,7 +24,7 @@ import { ArrowLeftIcon, DeleteIcon, EditIcon, ArrowRightIcon } from "@chakra-ui/
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
-import getEvents from "app/queries/getEvents"
+import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
 import { useStore, Scale, intervals } from "app/lib/reducer"
 import { timeMin, timeMax } from "app/lib/time"
 import googleAuth from "app/mutations/googleAuth"
@@ -34,7 +34,7 @@ const format = (n: number) => Math.round(n * 100) / 100
 const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
   const router = useRouter()
   const { state } = useStore()
-  const [{ data }] = useQuery(getEvents, {
+  const [{ data }] = useQuery(getGoogleCalendarEvents, {
     calendarId: calendar.uuid,
     timeMin: timeMin(state.date),
     timeMax: timeMax(state.date),
@@ -100,7 +100,7 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({ label, Icon, action
       aria-label={label}
     />
   ) : (
-    <Button colorScheme="blue" onClick={() => dispatch({ type: "val--" })} leftIcon={Icon}>
+    <Button colorScheme="blue" onClick={() => dispatch({ type: action })} leftIcon={Icon}>
       {label}
     </Button>
   )

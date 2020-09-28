@@ -10,7 +10,10 @@ interface GetEventsInput {
   timeMax?: Date
 }
 
-const getEvents = async (input: GetEventsInput, ctx: { session?: SessionContext } = {}) => {
+const getGoogleCalendarEvents = async (
+  input: GetEventsInput,
+  ctx: { session?: SessionContext } = {}
+) => {
   const userId = ctx.session?.userId as number
 
   const user = await db.user.findOne({ where: { id: userId } })
@@ -78,4 +81,4 @@ const getEvents = async (input: GetEventsInput, ctx: { session?: SessionContext 
   return { ok: true, data: { formatted, all, soFar } }
 }
 
-export default getEvents
+export default getGoogleCalendarEvents

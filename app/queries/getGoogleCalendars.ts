@@ -3,7 +3,7 @@ import { getClient } from "app/lib/gcal"
 import { SessionContext } from "blitz"
 import db from "db"
 
-const getCalendars = async (input?: any, ctx: { session?: SessionContext } = {}) => {
+const getGoogleCalendars = async (input?: any, ctx: { session?: SessionContext } = {}) => {
   const userId = ctx.session?.userId as number
 
   const user = await db.user.findOne({ where: { id: userId } })
@@ -21,4 +21,4 @@ const getCalendars = async (input?: any, ctx: { session?: SessionContext } = {})
   return { ok: true, data: calendars }
 }
 
-export default getCalendars
+export default getGoogleCalendars
