@@ -24,4 +24,5 @@ jobs:
       - run: "ssh-keyscan c2.zekan.tk >> ~/.ssh/known_hosts"
       - run: yarn
       - run: git checkout yarn.lock
+      - run: yarn b build
       - run: yarn deploy

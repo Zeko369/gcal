@@ -167,7 +167,7 @@ const HomePage: React.FC = () => {
 }
 
 const Main: React.FC = () => {
-  const currentUser = useCurrentUser()
+  const [currentUser] = useCurrentUser()
 
   return currentUser ? (
     <HomePage />

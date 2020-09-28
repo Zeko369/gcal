@@ -12,13 +12,13 @@ type LayoutProps = {
 }
 
 const User: React.FC = () => {
-  const currentUser = useCurrentUser()
+  const [currentUser] = useCurrentUser()
 
   return currentUser ? (
     <HStack alignItems="center">
       <Button onClick={async () => await logout()}>Logout</Button>
       <NextLink href="/user">
-        <Avatar name={currentUser.name || ""} cursor="pointer" />
+        <Avatar name={currentUser?.name || ""} cursor="pointer" />
       </NextLink>
     </HStack>
   ) : (
