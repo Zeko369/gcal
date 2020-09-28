@@ -42,9 +42,9 @@ const Links: React.FC = () => {
 const Nav: React.FC = () => {
   return (
     <Grid p="2" bg="#1a73e8" templateColumns="repeat(3, 1fr)" gap={6} alignItems="center">
-      <Link href="/">
-        <Heading color="white">Gcal</Heading>
-      </Link>
+      <Heading color="white">
+        <Link href="/">Gcal</Link>
+      </Heading>
 
       <Suspense fallback={() => null}>
         <Links />

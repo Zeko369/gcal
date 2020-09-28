@@ -16,6 +16,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/core"
 import { endOfWeek } from "date-fns"
+import { useRouter } from "next/router"
 import { Calendar } from "@prisma/client"
 import { Link, LinkIconButton } from "chakra-next-link"
 import { ArrowLeftIcon, DeleteIcon, EditIcon, ArrowRightIcon } from "@chakra-ui/icons"
@@ -24,12 +25,14 @@ import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
 import getEvents from "app/queries/getEvents"
-import { useStore, Scale, intervals, Action } from "app/lib/reducer"
+import { useStore, Scale, intervals } from "app/lib/reducer"
 import { timeMin, timeMax } from "app/lib/time"
+import googleAuth from "app/mutations/googleAuth"
 
 const format = (n: number) => Math.round(n * 100) / 100
 
 const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
+  const router = useRouter()
   const { state } = useStore()
   const [{ data }] = useQuery(getEvents, {
     calendarId: calendar.uuid,
@@ -37,11 +40,17 @@ const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
     timeMax: timeMax(state.date),
   })
 
+  const auth = async () => {
+    const authorizeUrl = await googleAuth()
+    router.push(authorizeUrl)
+  }
+
   if (!data) {
     return (
-      <Heading size="lg" color="red">
-        Error reading gcal
-      </Heading>
+      <>
+        <Heading size="sm">Token probably wrong</Heading>
+        <Button onClick={auth}>Google auth</Button>
+      </>
     )
   }
 

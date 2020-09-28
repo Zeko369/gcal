@@ -12,6 +12,9 @@ const tokenHandler = async (req: BlitzApiRequest, res: BlitzApiResponse) => {
   const { tokens } = await getClient().getToken(code)
   const { token, userId } = JSON.parse(state)
 
+  console.log(tokens)
+  console.log(token, userId)
+
   if (!token || !userId) {
     throw new Error("Token or userId missing")
   }
@@ -28,7 +31,9 @@ const tokenHandler = async (req: BlitzApiRequest, res: BlitzApiResponse) => {
 
   await db.user.update({ where: { id: userId }, data: { googleToken: JSON.stringify(tokens) } })
 
-  res.redirect("/")
+  res.json({ ok: true })
+
+  // res.redirect("/foo")
 }
 
 export default tokenHandler
