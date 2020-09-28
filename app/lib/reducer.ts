@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react"
-import { beginning } from "app/lib/time"
 import produce from "immer"
+import { startOfDay, startOfWeek, startOfMonth, startOfYear } from "date-fns"
 
 export type Scale = "day" | "week" | "month" | "year"
 type Action =
@@ -18,10 +18,10 @@ interface State {
 }
 
 export const intervals: { key: Scale; label: string; value: Date }[] = [
-  { key: "day", label: "Day", value: new Date() },
-  { key: "week", label: "Week", value: beginning.week() },
-  { key: "month", label: "Month", value: beginning.month() },
-  { key: "year", label: "Year", value: beginning.year() },
+  { key: "day", label: "Day", value: startOfDay(new Date()) },
+  { key: "week", label: "Week", value: startOfWeek(new Date(), { weekStartsOn: 1 }) },
+  { key: "month", label: "Month", value: startOfMonth(new Date()) },
+  { key: "year", label: "Year", value: startOfYear(new Date()) },
 ]
 
 export type Store = { state: State; dispatch: React.Dispatch<Action> }
@@ -29,7 +29,7 @@ export type Store = { state: State; dispatch: React.Dispatch<Action> }
 export const initialState: State = {
   date: {
     scale: "week",
-    value: beginning.week(),
+    value: startOfWeek(new Date(), { weekStartsOn: 1 }),
   },
 }
 

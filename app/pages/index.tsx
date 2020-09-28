@@ -14,6 +14,7 @@ import {
   Button,
   Grid,
 } from "@chakra-ui/core"
+import { endOfWeek } from "date-fns"
 import { Calendar } from "@prisma/client"
 import { Link, LinkIconButton } from "chakra-next-link"
 import { ArrowLeftIcon, DeleteIcon, EditIcon, ArrowRightIcon } from "@chakra-ui/icons"
@@ -23,7 +24,7 @@ import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
 import getEvents from "app/queries/getEvents"
 import { useStore, Scale, intervals } from "app/lib/reducer"
-import { timeMax, timeMin } from "app/lib/time"
+import { timeMin, timeMax } from "app/lib/time"
 
 const format = (n: number) => Math.round(n * 100) / 100
 
@@ -45,12 +46,12 @@ const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
 
   return (
     <VStack align="flex-start" spacing="1">
-      <Text size="md">
+      <Heading fontSize="lg">
         Hours:{" "}
         <strong>
           {format(data.soFar / 60)}h [{format(data.all / 60)}]
         </strong>
-      </Text>
+      </Heading>
       <Text>Count: {data.formatted.length}</Text>
     </VStack>
   )
@@ -61,7 +62,9 @@ const dFormat = (date: Date, scale: Scale) => {
     case "day":
       return `Day: ${date.toLocaleDateString()}`
     case "week":
-      return `Week: ${date.toLocaleDateString()} - ${"end.week(date).toLocaleDateString()"}`
+      return `Week: ${date.toLocaleDateString()} - ${endOfWeek(date, {
+        weekStartsOn: 1,
+      }).toLocaleDateString()}`
     case "month":
       return `Month: ${date.toLocaleDateString().slice(3)}`
     case "year":
@@ -124,7 +127,7 @@ const HomePage: React.FC = () => {
           <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
             <Flex justify="space-between" w="100%">
               <Link href="/calendars/[id]" as={`/calendars/${calendar.id}`}>
-                <Heading size="md">{calendar.name}</Heading>
+                <Heading size="lg">{calendar.name}</Heading>
               </Link>
               <HStack>
                 <LinkIconButton
