@@ -1,9 +1,9 @@
 import React, { useCallback } from "react"
-import { useRouter, useQuery } from "blitz"
-import { Heading, ListItem, Button, UnorderedList, Text } from "@chakra-ui/core"
-import googleAuth from "app/mutations/googleAuth"
+import { useQuery } from "blitz"
+import { Heading, ListItem, UnorderedList, Text } from "@chakra-ui/core"
 import getGoogleCalendars from "app/queries/getGoogleCalendars"
 import getCalendars from "app/calendars/queries/getCalendars"
+import { RestGoogleToken } from "app/components/RestGoogleToken"
 
 interface ListGcalProps {
   select: (id: string | null | undefined) => () => void
@@ -11,13 +11,6 @@ interface ListGcalProps {
 }
 
 export const ListGcal: React.FC<ListGcalProps> = ({ select, selectedId }) => {
-  const router = useRouter()
-
-  const auth = async () => {
-    const authorizeUrl = await googleAuth()
-    router.push(authorizeUrl)
-  }
-
   const [googleCalendars] = useQuery(getGoogleCalendars, {})
   const [dbCalendars] = useQuery(getCalendars, {})
 
@@ -30,7 +23,7 @@ export const ListGcal: React.FC<ListGcalProps> = ({ select, selectedId }) => {
     return (
       <>
         <Heading size="sm">Token probably wrong</Heading>
-        <Button onClick={auth}>Google auth</Button>
+        <RestGoogleToken redirect="/calendars/new" />
       </>
     )
   }

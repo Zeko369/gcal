@@ -16,7 +16,6 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/core"
 import { endOfWeek } from "date-fns"
-import { useRouter } from "next/router"
 import { Calendar } from "@prisma/client"
 import { Link, LinkIconButton } from "chakra-next-link"
 import { ArrowLeftIcon, DeleteIcon, EditIcon, ArrowRightIcon } from "@chakra-ui/icons"
@@ -27,12 +26,11 @@ import getCalendarsDB from "app/calendars/queries/getCalendars"
 import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
 import { useStore, Scale, intervals } from "app/lib/reducer"
 import { timeMin, timeMax } from "app/lib/time"
-import googleAuth from "app/mutations/googleAuth"
+import { RestGoogleToken } from "app/components/RestGoogleToken"
 
 const format = (n: number) => Math.round(n * 100) / 100
 
 const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
-  const router = useRouter()
   const { state } = useStore()
   const [{ data }] = useQuery(getGoogleCalendarEvents, {
     calendarId: calendar.uuid,
@@ -40,16 +38,11 @@ const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
     timeMax: timeMax(state.date),
   })
 
-  const auth = async () => {
-    const authorizeUrl = await googleAuth()
-    router.push(authorizeUrl)
-  }
-
   if (!data) {
     return (
       <>
         <Heading size="sm">Token probably wrong</Heading>
-        <Button onClick={auth}>Google auth</Button>
+        <RestGoogleToken />
       </>
     )
   }
@@ -137,7 +130,7 @@ const HomePage: React.FC = () => {
         <NavigationButton label="Next" Icon={<ArrowRightIcon />} action="val++" />
       </Grid>
       <Flex justify="space-between">
-        <Heading size="lg" mb="2">
+        <Heading size="md" mb="2">
           {date}
         </Heading>
         <Button colorScheme="green" onClick={() => dispatch({ type: "reset" })}>
