@@ -1,5 +1,6 @@
 import { useQuery, useSession } from "blitz"
 import getCurrentUser from "app/queries/getCurrentUser"
+import { UserSelect, User, Session, Calendar } from "@prisma/client"
 
 export interface CurrentUser {
   id: number
@@ -8,10 +9,17 @@ export interface CurrentUser {
   role: string
 }
 
-export const useCurrentUser = () => {
-  // We wouldn't have to useSession() here, but doing so improves perf on initial
-  // load since we can skip the getCurrentUser() request.
+export type BaseUserSelect = "id" | "name" | "email" | "role"
+
+type A = User & { sessions: Session[]; calendars: Calendar[] }
+
+// TODO: FIX GENERIC
+export const useCurrentUser = <T extends Omit<UserSelect, BaseUserSelect>>(
+  userSelect?: T
+): [A | null, () => void] => {
   const session = useSession()
-  const [user] = useQuery(getCurrentUser, null, { enabled: !!session.userId })
-  return session.userId ? user : null
+  const [user, { refetch }] = useQuery(getCurrentUser, userSelect || {}, {
+    enabled: !!session.userId,
+  })
+  return [session.userId ? (user as any) : null, refetch]
 }

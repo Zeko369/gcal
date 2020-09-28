@@ -2,6 +2,7 @@ import React, { ReactNode, Suspense } from "react"
 import { Head, useSession } from "blitz"
 import { HStack, Flex, Box, Heading, Avatar, Button, Spinner, Grid } from "@chakra-ui/core"
 import { Link, LinkButton } from "chakra-next-link"
+import NextLink from "next/link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import logout from "app/auth/mutations/logout"
 
@@ -16,7 +17,9 @@ const User: React.FC = () => {
   return currentUser ? (
     <HStack alignItems="center">
       <Button onClick={async () => await logout()}>Logout</Button>
-      <Avatar name={currentUser.name || ""} />
+      <NextLink href="/user">
+        <Avatar name={currentUser.name || ""} cursor="pointer" />
+      </NextLink>
     </HStack>
   ) : (
     <HStack>
@@ -76,7 +79,7 @@ const Layout = ({ title, children }: LayoutProps) => {
       </Box>
 
       {/* Footer */}
-      <Box as="footer" bg="#000" py="4" textAlign="center">
+      <Box as="footer" bg="#000" color="white" py="4" textAlign="center">
         Gcal app copyright Fran Zekan
       </Box>
     </>
