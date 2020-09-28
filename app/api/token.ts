@@ -28,7 +28,9 @@ const tokenHandler = async (req: BlitzApiRequest, res: BlitzApiResponse) => {
 
   await db.user.update({ where: { id: userId }, data: { googleToken: JSON.stringify(tokens) } })
 
-  console.log(tokens)
+  if (!tokens.refresh_token) {
+    res.json(tokens)
+  }
 
   res.json({ ok: true })
 
