@@ -8,7 +8,7 @@
     "studio": "blitz db studio",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "build": "NODE_ENV=production blitz db migrate && blitz build",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch"
   },
   "browserslist": [
