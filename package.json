@@ -9,7 +9,8 @@
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "build": "NODE_ENV=production blitz db migrate && blitz build",
     "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "deploy": "pm2 deploy production update"
   },
   "browserslist": [
     "defaults"
