@@ -1,8 +1,8 @@
 import { google } from "googleapis"
-import { getClient } from "app/lib/gcal"
 import { SessionContext } from "blitz"
+import { getClient } from "app/lib/gcal"
+import { beginning, end } from "app/lib/time"
 import db from "db"
-import { endOfMonth, firstOfMonth } from "app/lib/helpers"
 
 interface GetEventsInput {
   calendarId: string
@@ -28,8 +28,8 @@ const getEvents = async (input: GetEventsInput, ctx: { session?: SessionContext 
   const events = await calendar.events.list({
     calendarId,
     maxResults: 1000,
-    timeMin: (timeMin || firstOfMonth()).toISOString(),
-    timeMax: (timeMax || endOfMonth()).toISOString(),
+    timeMin: (timeMin || beginning.month()).toISOString(),
+    timeMax: (timeMax || end.month()).toISOString(),
     singleEvents: true,
     orderBy: "startTime",
   })

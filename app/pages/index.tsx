@@ -23,7 +23,7 @@ import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
 import getEvents from "app/queries/getEvents"
 import { useStore, Scale, intervals } from "app/lib/reducer"
-import { endOfWeek, timeMax, timeMin } from "app/lib/helpers"
+import { timeMax, timeMin } from "app/lib/time"
 
 const format = (n: number) => Math.round(n * 100) / 100
 
@@ -61,7 +61,7 @@ const dFormat = (date: Date, scale: Scale) => {
     case "day":
       return `Day: ${date.toLocaleDateString()}`
     case "week":
-      return `Week: ${date.toLocaleDateString()} - ${endOfWeek(date).toLocaleDateString()}`
+      return `Week: ${date.toLocaleDateString()} - ${"end.week(date).toLocaleDateString()"}`
     case "month":
       return `Month: ${date.toLocaleDateString().slice(3)}`
     case "year":
