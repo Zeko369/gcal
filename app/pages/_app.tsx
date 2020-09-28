@@ -8,7 +8,10 @@ import { initialState, reducer, StoreContext } from "app/lib/reducer"
 
 import { Global, css } from "@emotion/core"
 const globalStyles = css`
-  html,
+  html {
+    height: -webkit-fill-available;
+  }
+
   body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
@@ -16,10 +19,18 @@ const globalStyles = css`
 
   #__next {
     min-height: 100vh;
-    min-height: -webkit-fill-available;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
+  }
+
+  /* Because Safari */
+  @media not all and (min-resolution: 0.001dpcm) {
+    @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+      #__next {
+        min-height: -webkit-fill-available;
+      }
+    }
   }
 `
 
