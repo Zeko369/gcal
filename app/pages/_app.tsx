@@ -1,38 +1,11 @@
 import React, { useReducer } from "react"
 import { AppProps, ErrorComponent, useRouter } from "blitz"
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
-import { queryCache } from "react-query"
-import LoginForm from "app/auth/components/LoginForm"
 import { ChakraProvider } from "@chakra-ui/core"
+import { queryCache } from "react-query"
 import { initialState, reducer, StoreContext } from "app/lib/reducer"
-
-import { Global, css } from "@emotion/core"
-const globalStyles = css`
-  html {
-    height: -webkit-fill-available;
-  }
-
-  body {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-  }
-
-  #__next {
-    min-height: 100vh;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-  }
-
-  /* Because Safari */
-  @media not all and (min-resolution: 0.001dpcm) {
-    @supports (-webkit-appearance: none) and (stroke-color: transparent) {
-      #__next {
-        min-height: -webkit-fill-available;
-      }
-    }
-  }
-`
+import LoginForm from "app/auth/components/LoginForm"
+import { Global } from "app/styles/Global"
 
 export default function App({ Component, pageProps }: AppProps) {
   const getLayout = Component.getLayout || ((page) => page)
@@ -48,7 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
         queryCache.resetErrorBoundaries()
       }}
     >
-      <Global styles={globalStyles} />
+      <Global />
       <ChakraProvider resetCSS>
         <StoreContext.Provider value={{ dispatch, state }}>
           {getLayout(<Component {...pageProps} />)}
