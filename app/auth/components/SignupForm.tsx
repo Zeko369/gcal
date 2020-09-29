@@ -8,7 +8,6 @@ import { AuthContext } from "./AuthLayout"
 
 type SignUpFormProps = {
   onSuccess?: () => void
-  initState: Partial<SignupFormData>
 }
 
 interface SignupFormData {
