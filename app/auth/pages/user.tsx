@@ -1,6 +1,7 @@
 import React, { Suspense } from "react"
 import { BlitzPage } from "blitz"
-import { Stack, Heading, Spinner, Divider, Button, Text } from "@chakra-ui/core"
+import { VStack, Heading, Spinner, Divider, Button, Text, useColorMode } from "@chakra-ui/core"
+import { MoonIcon, SunIcon } from "@chakra-ui/icons"
 import Layout from "app/layouts/Layout"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { RestGoogleToken } from "app/components/RestGoogleToken"
@@ -21,13 +22,14 @@ const RevokeGoogleToken: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) =
 
 const UserDetails: React.FC = () => {
   const [user, refetch] = useCurrentUser({ createdAt: true, googleToken: true, calendars: true })
+  const { colorMode, toggleColorMode } = useColorMode()
 
   if (!user) {
     return <Heading>Loading user...</Heading>
   }
 
   return (
-    <Stack>
+    <VStack alignItems="flex-start">
       <Heading>Hello, {user?.name}</Heading>
       <Divider mt="4" />
       <Heading size="md">Google auth</Heading>
@@ -39,7 +41,16 @@ const UserDetails: React.FC = () => {
       <Divider mt="4" />
       <Heading size="md">Calendars</Heading>
       <Text>Count: {user.calendars.length}</Text>
-    </Stack>
+      <Divider mt="4" />
+      <Heading>Theme: {colorMode}</Heading>
+      <Button
+        onClick={toggleColorMode}
+        rightIcon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+      >
+        {colorMode === "light" ? "Dark" : "Light"}
+      </Button>
+      <Divider mt="4" />
+    </VStack>
   )
 }
 
