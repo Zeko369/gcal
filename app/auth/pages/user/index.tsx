@@ -30,9 +30,11 @@ const RevokeGoogleToken: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) =
   )
 }
 
-const Section: React.FC<{ title: string; titleSize?: string; right?: React.ReactElement }> = (
-  props
-) => {
+export const Section: React.FC<{
+  title: string
+  titleSize?: string
+  right?: React.ReactElement
+}> = (props) => {
   const { children, title, titleSize, right } = props
 
   return (

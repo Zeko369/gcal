@@ -2,7 +2,7 @@ import React, { Suspense, useEffect, useState } from "react"
 import { BlitzPage, useRouter } from "blitz"
 import { useForm } from "react-hook-form"
 import { User } from "@prisma/client"
-import { Spinner, Divider, Heading, VStack, Button, Flex, Stack } from "@chakra-ui/core"
+import { Spinner, Divider, Heading, VStack, Button, Flex, Stack, Box } from "@chakra-ui/core"
 import Layout from "app/layouts/Layout"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { Input } from "app/components/Input"
@@ -10,6 +10,8 @@ import changePassword from "app/auth/mutations/changePassword"
 import updateUser from "app/auth/mutations/updateUser"
 import { useDebounce } from "app/hooks/useDebounce"
 import isCurrentPasswordOk from "app/auth/mutations/isCurrentPasswordOk"
+import { Section } from "."
+import { LinkButton } from "chakra-next-link"
 
 type UserFormData = Pick<User, "name">
 const PasswordFields = ["password", "confirm_password", "current_password"] as const
@@ -30,17 +32,18 @@ const UserForm: React.FC<UserFormProps> = ({ user, refetch }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack align="flex-start">
-        <Heading size="md">Personal: </Heading>
-        <Input name="name" ref={register({ required: true })} isRequired />
-        <Flex w="100%" justify="flex-end">
-          <Button type="submit" isLoading={formState.isSubmitting} colorScheme="green">
-            Save
-          </Button>
-        </Flex>
-      </VStack>
-    </form>
+    <Box w="100%">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <VStack align="flex-start">
+          <Input name="name" ref={register({ required: true })} isRequired />
+          <Flex w="100%" justify="flex-end">
+            <Button type="submit" isLoading={formState.isSubmitting} colorScheme="green">
+              Save
+            </Button>
+          </Flex>
+        </VStack>
+      </form>
+    </Box>
   )
 }
 
@@ -69,10 +72,10 @@ const PasswordForm: React.FC = () => {
     if (current_password.length > 0) {
       isCurrentPasswordOk(current_password).then((ok) => {
         if (ok) {
-          return clearErrors("current_password")
+          clearErrors("current_password")
+        } else {
+          setError("current_password", { message: "Password doesn't match your current one" })
         }
-
-        setError("current_password", { message: "Password doesn't match your current one" })
       })
     }
   }, [current_password, setError, clearErrors])
@@ -101,40 +104,41 @@ const PasswordForm: React.FC = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack align="flex-start">
-        <Heading size="md">Authentication: </Heading>
-        {otherError && (
-          <Heading size="sm" color="red.500">
-            {otherError}
-          </Heading>
-        )}
-        <Input
-          name="current_password"
-          error={errors.current_password?.message}
-          ref={register({ required: true })}
-          isRequired
-        />
-        <Divider />
-        <Input
-          name="password"
-          error={errors.password?.message}
-          ref={register({ required: true })}
-          isRequired
-        />
-        <Input
-          name="confirm_password"
-          error={errors.confirm_password?.message}
-          ref={register({ required: true })}
-          isRequired
-        />
-        <Flex w="100%" justify="flex-end">
-          <Button type="submit" isLoading={formState.isSubmitting} colorScheme="green">
-            Change password
-          </Button>
-        </Flex>
-      </VStack>
-    </form>
+    <Box w="100%">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <VStack align="flex-start">
+          {otherError && (
+            <Heading size="sm" color="red.500">
+              {otherError}
+            </Heading>
+          )}
+          <Input
+            name="current_password"
+            error={errors.current_password?.message}
+            ref={register({ required: true })}
+            isRequired
+          />
+          <Divider />
+          <Input
+            name="password"
+            error={errors.password?.message}
+            ref={register({ required: true })}
+            isRequired
+          />
+          <Input
+            name="confirm_password"
+            error={errors.confirm_password?.message}
+            ref={register({ required: true })}
+            isRequired
+          />
+          <Flex w="100%" justify="flex-end">
+            <Button type="submit" isLoading={formState.isSubmitting} colorScheme="green">
+              Change password
+            </Button>
+          </Flex>
+        </VStack>
+      </form>
+    </Box>
   )
 }
 
@@ -143,9 +147,17 @@ const UserDetails: React.FC = () => {
 
   return (
     <Stack>
-      <Heading>Edit user profile</Heading>
-      {user ? <UserForm user={user} refetch={refetch} /> : <Heading>Loading user...</Heading>}
-      <PasswordForm />
+      <Section
+        title="Edit user profile"
+        titleSize="xl"
+        right={<LinkButton href="/user">Back to user</LinkButton>}
+      ></Section>
+      <Section title="Personal">
+        {user ? <UserForm user={user} refetch={refetch} /> : <Heading>Loading user...</Heading>}
+      </Section>
+      <Section title="Authentication">
+        <PasswordForm />
+      </Section>
     </Stack>
   )
 }
