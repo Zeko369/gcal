@@ -143,7 +143,7 @@ const HomePage: React.FC = () => {
         {calendars.map((calendar) => (
           <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
             <Flex justify="space-between" w="100%">
-              <Link href="/calendars/[id]" as={`/calendars/${calendar.id}`}>
+              <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
                 <Heading size="lg">{calendar.name}</Heading>
               </Link>
               <HStack>
@@ -152,7 +152,7 @@ const HomePage: React.FC = () => {
                   colorScheme="green"
                   icon={<EditIcon />}
                   href="/calendars/[id]/edit"
-                  as={`/calendars/${calendar.id}/edit`}
+                  nextAs={`/calendars/${calendar.id}/edit`}
                   aria-label="edit"
                 />
                 <IconButton size="xs" colorScheme="red" icon={<DeleteIcon />} aria-label="delete" />

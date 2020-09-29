@@ -24,7 +24,7 @@ export const CalendarsList = () => {
       <UnorderedList my="4">
         {calendars.map((calendar) => (
           <ListItem key={calendar.id}>
-            <Link href="/calendars/[calendarId]" as={`/calendars/${calendar.id}`}>
+            <Link href="/calendars/[calendarId]" nextAs={`/calendars/${calendar.id}`}>
               {calendar.name}
             </Link>
           </ListItem>

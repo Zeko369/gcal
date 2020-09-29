@@ -79,7 +79,7 @@ export const Calendar = () => {
           <LinkIconButton
             colorScheme="green"
             href="/calendars/[calendarId]/edit"
-            as={`/calendars/${calendar.id}/edit`}
+            nextAs={`/calendars/${calendar.id}/edit`}
             icon={<EditIcon />}
             aria-label="edit"
           />
