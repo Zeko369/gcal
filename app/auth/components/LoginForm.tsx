@@ -1,22 +1,45 @@
-import React, { useState } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import { Link } from "chakra-next-link"
 import login from "app/auth/mutations/login"
 import { Button, Heading, Stack } from "@chakra-ui/core"
-import { useForm } from "react-hook-form"
+import { Control, useForm, useWatch } from "react-hook-form"
 import { Input } from "app/components/Input"
+import { AuthContext } from "./AuthLayout"
 
 type LoginFormProps = {
   onSuccess?: () => void
 }
 
+interface LoginFormData {
+  email: string
+  password: string
+}
+
+const UpdateStore: React.FC<{ control: Control<LoginFormData> }> = ({ control }) => {
+  const { state, dispatch } = useContext(AuthContext)
+
+  const email = useWatch({ control, name: "email", defaultValue: state.email })
+  const password = useWatch({ control, name: "password", defaultValue: state.password })
+
+  useEffect(() => {
+    dispatch({ type: "setEmail", payload: email })
+  }, [email, dispatch])
+  useEffect(() => {
+    dispatch({ type: "setPassword", payload: password })
+  }, [password, dispatch])
+
+  return null
+}
+
 export const LoginForm = (props: LoginFormProps) => {
   const [otherError, setOtherError] = useState("")
-  const { handleSubmit, register, setError, errors, formState } = useForm<{
-    email: string
-    password: "string"
-  }>()
+  const { state } = useContext(AuthContext)
 
-  const onSubmit = async (values) => {
+  const { handleSubmit, register, setError, errors, formState, control } = useForm<LoginFormData>({
+    defaultValues: { ...state },
+  })
+
+  const onSubmit = async (values: LoginFormData) => {
     try {
       await login({ email: values.email, password: values.password })
       props.onSuccess && props.onSuccess()
@@ -31,12 +54,13 @@ export const LoginForm = (props: LoginFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <UpdateStore control={control} />
       <Stack spacing="3">
         <Heading size="lg">Login</Heading>
 
         {otherError && (
           <Heading size="md" color="red.600">
-            Error :(
+            {otherError}
           </Heading>
         )}
 
