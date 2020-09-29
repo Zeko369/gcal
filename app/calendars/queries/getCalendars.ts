@@ -13,7 +13,7 @@ const getCalendars = async (input: GetCalendarsInput, ctx: Ctx = {}) => {
 
   const { where, orderBy, skip = 0, take } = input
   const calendars = await db.calendar.findMany({
-    where: { ...where, userId: ctx.session!.userId },
+    where: { ...where, user: { id: { equals: ctx.session!.userId } } },
     orderBy,
     take,
     skip,
