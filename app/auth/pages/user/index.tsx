@@ -85,7 +85,7 @@ const UserDetails: React.FC = () => {
             </Button>
             <Confirm
               {...{
-                ...confirmProps,
+                confirmProps,
                 text: {
                   title: "Are you sure you want to revoke your google token?",
                   body:

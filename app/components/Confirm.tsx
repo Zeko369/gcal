@@ -19,7 +19,8 @@ export const useConfirm = () => {
 
 type UseConfirmOutput = ReturnType<typeof useConfirm>
 
-interface ConfirmProps extends UseConfirmOutput {
+interface ConfirmProps {
+  confirmProps: UseConfirmOutput
   cancelRef?: React.RefObject<HTMLButtonElement>
   text: {
     title: string
@@ -29,14 +30,19 @@ interface ConfirmProps extends UseConfirmOutput {
     text: string
     color?: string
   }
-  onConfirm: () => void
+  onConfirm?: () => void
 }
 
 export const Confirm: React.FC<ConfirmProps> = (props) => {
-  const ref = useRef<HTMLButtonElement>(null)
-
-  const { isOpen, close, text, children, onConfirm } = props
+  const {
+    text,
+    children,
+    onConfirm,
+    confirmProps: { isOpen, close },
+  } = props
   let { cancelRef } = props
+
+  const ref = useRef<HTMLButtonElement>(null)
 
   if (!cancelRef) {
     cancelRef = ref
@@ -60,7 +66,7 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
               colorScheme={props.primaryButton?.color || "red"}
               onClick={() => {
                 close()
-                onConfirm()
+                onConfirm && onConfirm()
               }}
               ml={3}
             >
