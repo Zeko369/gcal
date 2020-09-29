@@ -1,11 +1,21 @@
 import React, { Suspense } from "react"
 import { BlitzPage } from "blitz"
-import { VStack, Heading, Spinner, Divider, Button, Text, useColorMode } from "@chakra-ui/core"
+import {
+  VStack,
+  Heading,
+  Spinner,
+  Divider,
+  Button,
+  Text,
+  useColorMode,
+  Flex,
+} from "@chakra-ui/core"
 import { MoonIcon, SunIcon } from "@chakra-ui/icons"
 import Layout from "app/layouts/Layout"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { RestGoogleToken } from "app/components/RestGoogleToken"
 import revokeGoogleToken from "app/mutations/revokeGoogleToken"
+import { LinkButton } from "chakra-next-link"
 
 const RevokeGoogleToken: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const auth = async () => {
@@ -20,20 +30,32 @@ const RevokeGoogleToken: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) =
   )
 }
 
-const Section: React.FC<{ title: string; titleSize?: string }> = (props) => {
-  const { children, title, titleSize } = props
+const Section: React.FC<{ title: string; titleSize?: string; right?: React.ReactElement }> = (
+  props
+) => {
+  const { children, title, titleSize, right } = props
 
   return (
     <>
-      <Heading size={titleSize || "md"}>{title}</Heading>
-      {children}
+      <Flex justify="space-between" align="center" w="100%">
+        <Heading size={titleSize || "md"}>{title}</Heading>
+        {right}
+      </Flex>
+      <VStack alignItems="flex-start" spacing="1">
+        {children}
+      </VStack>
       <Divider mt="4" />
     </>
   )
 }
 
 const UserDetails: React.FC = () => {
-  const [user, refetch] = useCurrentUser({ createdAt: true, googleToken: true, calendars: true })
+  const [user, refetch] = useCurrentUser({
+    createdAt: true,
+    googleToken: true,
+    calendars: true,
+    sessions: true,
+  })
   const { colorMode, toggleColorMode } = useColorMode()
 
   if (!user) {
@@ -42,7 +64,23 @@ const UserDetails: React.FC = () => {
 
   return (
     <VStack alignItems="flex-start">
-      <Section title="Google auth" titleSize="xl" />
+      <Section
+        title={`Hello, ${user.name}`}
+        titleSize="xl"
+        right={
+          <LinkButton href="/user/edit" colorScheme="blue">
+            Edit profile
+          </LinkButton>
+        }
+      />
+      <Section title="Account details">
+        <Text>
+          <strong>Email: </strong> {user.email}
+        </Text>
+        <Text>
+          <strong>Role: </strong> {user.role}
+        </Text>
+      </Section>
       <Section title="Google auth">
         {user.googleToken ? (
           <RevokeGoogleToken onSuccess={refetch} />
