@@ -16,19 +16,7 @@ import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { RestGoogleToken } from "app/components/RestGoogleToken"
 import revokeGoogleToken from "app/mutations/revokeGoogleToken"
 import { LinkButton } from "chakra-next-link"
-
-const RevokeGoogleToken: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
-  const auth = async () => {
-    await revokeGoogleToken()
-    onSuccess()
-  }
-
-  return (
-    <Button onClick={auth} colorScheme="red">
-      Revoke token
-    </Button>
-  )
-}
+import { Confirm, useConfirm } from "app/components/Confirm"
 
 export const Section: React.FC<{
   title: string
@@ -59,6 +47,12 @@ const UserDetails: React.FC = () => {
     sessions: true,
   })
   const { colorMode, toggleColorMode } = useColorMode()
+  const confirmProps = useConfirm()
+
+  const revokeGoogle = async () => {
+    await revokeGoogleToken()
+    refetch()
+  }
 
   if (!user) {
     return <Heading>Loading user...</Heading>
@@ -85,9 +79,33 @@ const UserDetails: React.FC = () => {
       </Section>
       <Section title="Google auth">
         {user.googleToken ? (
-          <RevokeGoogleToken onSuccess={refetch} />
+          <>
+            <Button onClick={confirmProps.open} colorScheme="red">
+              Revoke token
+            </Button>
+            <Confirm
+              {...{
+                ...confirmProps,
+                text: {
+                  title: "Are you sure you want to revoke your google token?",
+                  body:
+                    "Doing this will make it so you can't view your calendars or hours for those calendars. If you do so, you'll need to re-authenticate to be able to view your calendars or hours",
+                },
+                primaryButton: {
+                  text: "Revoke token",
+                },
+                onConfirm: revokeGoogle,
+              }}
+            />
+          </>
         ) : (
-          <RestGoogleToken redirect="/user" />
+          <>
+            <Heading size="sm" color="red.500">
+              You haven't authenticated with google yet, click on the button to be able to see your
+              google calendars and read their time
+            </Heading>
+            <RestGoogleToken redirect="/user" />
+          </>
         )}
       </Section>
       <Section title="Calendars">
