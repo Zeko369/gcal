@@ -20,6 +20,18 @@ const RevokeGoogleToken: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) =
   )
 }
 
+const Section: React.FC<{ title: string; titleSize?: string }> = (props) => {
+  const { children, title, titleSize } = props
+
+  return (
+    <>
+      <Heading size={titleSize || "md"}>{title}</Heading>
+      {children}
+      <Divider mt="4" />
+    </>
+  )
+}
+
 const UserDetails: React.FC = () => {
   const [user, refetch] = useCurrentUser({ createdAt: true, googleToken: true, calendars: true })
   const { colorMode, toggleColorMode } = useColorMode()
@@ -30,26 +42,25 @@ const UserDetails: React.FC = () => {
 
   return (
     <VStack alignItems="flex-start">
-      <Heading>Hello, {user?.name}</Heading>
-      <Divider mt="4" />
-      <Heading size="md">Google auth</Heading>
-      {user.googleToken ? (
-        <RevokeGoogleToken onSuccess={refetch} />
-      ) : (
-        <RestGoogleToken redirect="/user" />
-      )}
-      <Divider mt="4" />
-      <Heading size="md">Calendars</Heading>
-      <Text>Count: {user.calendars.length}</Text>
-      <Divider mt="4" />
-      <Heading>Theme: {colorMode}</Heading>
-      <Button
-        onClick={toggleColorMode}
-        rightIcon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-      >
-        {colorMode === "light" ? "Dark" : "Light"}
-      </Button>
-      <Divider mt="4" />
+      <Section title="Google auth" titleSize="xl" />
+      <Section title="Google auth">
+        {user.googleToken ? (
+          <RevokeGoogleToken onSuccess={refetch} />
+        ) : (
+          <RestGoogleToken redirect="/user" />
+        )}
+      </Section>
+      <Section title="Calendars">
+        <Text>Count: {user.calendars.length}</Text>
+      </Section>
+      <Section title={`Theme: ${colorMode}`}>
+        <Button
+          onClick={toggleColorMode}
+          rightIcon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+        >
+          {colorMode === "light" ? "Dark" : "Light"}
+        </Button>
+      </Section>
     </VStack>
   )
 }
