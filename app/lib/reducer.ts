@@ -1,11 +1,13 @@
 import { createContext, useContext } from "react"
 import produce from "immer"
 import { startOfDay, startOfWeek, startOfMonth, startOfYear } from "date-fns"
+import { setCookie } from "nookies"
+import { cookieOptions } from "./cookie"
 
-export type Scale = "day" | "week" | "month" | "year"
+export const Scales = ["day", "week", "month", "year"] as const
+export type Scale = typeof Scales[number]
 export type Action =
-  | { type: "setScale"; payload: { value: Scale } }
-  | { type: "setValue"; payload: { value: Date } }
+  | { type: "setValueScale"; payload: { value: Date; scale: Scale } }
   | { type: "reset" }
   | { type: "val++" }
   | { type: "val--" }
@@ -43,17 +45,22 @@ export const useStore = () => useContext(StoreContext)
 
 export const day = (n = 1) => 1000 * 60 * 60 * 24 * n
 
+type DT = React.Dispatch<Action>
+
+export const setValueScale = (dispatch: DT) => (value: Date, scale: Scale) => {
+  dispatch({ type: "setValueScale", payload: { value, scale } })
+  setCookie(null, "scale", scale, cookieOptions)
+  setCookie(null, "value", value.toISOString(), cookieOptions)
+}
+
 export const reducer = (state: State, action: Action): State => {
   const { date } = state
 
   switch (action.type) {
-    case "setScale":
-      return produce(state, (draft) => {
-        draft.date.scale = action.payload.value
-      })
-    case "setValue":
+    case "setValueScale":
       return produce(state, (draft) => {
         draft.date.value = action.payload.value
+        draft.date.scale = action.payload.scale
       })
     case "reset":
       return { date: { ...date, value: intervals.find((i) => i.key === date.scale)!.value } }

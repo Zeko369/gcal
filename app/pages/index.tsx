@@ -1,5 +1,5 @@
-import React, { Suspense, useCallback, useMemo } from "react"
-import { BlitzPage, useQuery } from "blitz"
+import React, { Suspense, useCallback, useMemo, useReducer } from "react"
+import { BlitzPage, GetServerSideProps, useQuery } from "blitz"
 import {
   Spinner,
   Heading,
@@ -19,14 +19,17 @@ import { endOfWeek } from "date-fns"
 import { Calendar } from "@prisma/client"
 import { Link, LinkIconButton } from "chakra-next-link"
 import { ArrowLeftIcon, DeleteIcon, EditIcon, ArrowRightIcon } from "@chakra-ui/icons"
+import { parseCookies, setCookie } from "nookies"
 
+import { initialState, reducer, setValueScale, StoreContext, Store } from "app/lib/reducer"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
 import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
-import { useStore, Scale, intervals } from "app/lib/reducer"
+import { useStore, Scale, Scales, intervals } from "app/lib/reducer"
 import { timeMin, timeMax } from "app/lib/time"
 import { RestGoogleToken } from "app/components/RestGoogleToken"
+import { cookieOptions } from "app/lib/cookie"
 
 const format = (n: number) => Math.round(n * 100) / 100
 
@@ -104,12 +107,11 @@ const HomePage: React.FC = () => {
   const { dispatch, state } = useStore()
 
   const onChange = useCallback(
-    (e) => {
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
       const scale = e.target.value as Scale
       const value = intervals.find((i) => i.key === scale)!.value
 
-      dispatch({ type: "setScale", payload: { value: scale } })
-      dispatch({ type: "setValue", payload: { value } })
+      setValueScale(dispatch)(value, scale)
     },
     [dispatch]
   )
@@ -179,12 +181,72 @@ const Main: React.FC = () => {
   )
 }
 
-const Home: BlitzPage = () => {
+interface HomeProps {
+  date: Partial<{ value: string; scale: Scale }>
+}
+
+const init = (date: HomeProps["date"]): Store["state"] => {
+  return {
+    ...initialState,
+    date: {
+      scale: date.scale || initialState.date.scale,
+      value: date.value ? new Date(date.value) : initialState.date.value,
+    },
+  }
+}
+
+const Home: BlitzPage<HomeProps> = ({ date }) => {
+  const [state, dispatch] = useReducer<typeof reducer, HomeProps["date"]>(reducer, date, init)
+
   return (
-    <Suspense fallback={() => <Spinner />}>
-      <Main />
-    </Suspense>
+    <StoreContext.Provider value={{ dispatch, state }}>
+      <Suspense fallback={() => <Spinner />}>
+        <Main />
+      </Suspense>
+    </StoreContext.Provider>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async (ctx) => {
+  const cookies = parseCookies(ctx)
+  const output: HomeProps["date"] = {}
+
+  try {
+    if (!cookies.value) {
+      throw new Error("noCookie")
+    }
+    const value = new Date(cookies.value)
+    output.value = value.toISOString()
+  } catch (err) {
+    if (!(err instanceof Error && err.message === "noCookie")) {
+      console.error(err)
+    }
+
+    setCookie(ctx, "value", initialState.date.value.toISOString(), cookieOptions)
+  }
+
+  try {
+    if (!cookies.scale) {
+      throw new Error("noScale")
+    }
+
+    if (!Scales.includes(cookies.scale as Scale)) {
+      throw new Error("Scale not found")
+    }
+
+    const scale = cookies.scale as Scale
+    output.scale = scale
+  } catch (err) {
+    if (!(err instanceof Error && err.message === "noScale")) {
+      console.error(err)
+    }
+
+    setCookie(ctx, "scale", initialState.date.scale, cookieOptions)
+  }
+
+  !cookies.scale && setCookie(ctx, "scale", initialState.date.scale, cookieOptions)
+
+  return { props: { date: output } }
 }
 
 Home.getLayout = (page) => <Layout title="Home">{page}</Layout>
