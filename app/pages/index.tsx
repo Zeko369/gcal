@@ -66,13 +66,17 @@ const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
 const dFormat = (date: Date, scale: Scale) => {
   switch (scale) {
     case "day":
-      return `Day: ${date.toLocaleDateString()}`
+      return `Day: ${date.toDateString()}`
     case "week":
-      return `Week: ${date.toLocaleDateString()} - ${endOfWeek(date, {
-        weekStartsOn: 1,
-      }).toLocaleDateString()}`
+      const end = endOfWeek(date, { weekStartsOn: 1 })
+      return `Week: ${date.toDateString()} - ${end.toDateString()}`
     case "month":
-      return `Month: ${date.toLocaleDateString().slice(3)}`
+      const month = date
+        .toDateString()
+        .split(" ")
+        .filter((_, i) => i % 2 === 1)
+        .join(" ")
+      return `Month: ${month}`
     case "year":
       return `Year: ${date.getFullYear()}`
   }
