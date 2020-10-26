@@ -11,11 +11,12 @@ import {
   Flex,
 } from "@chakra-ui/core"
 import { MoonIcon, SunIcon } from "@chakra-ui/icons"
+import { LinkButton } from "chakra-next-link"
+
 import Layout from "app/layouts/Layout"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { RestGoogleToken } from "app/components/RestGoogleToken"
 import revokeGoogleToken from "app/mutations/revokeGoogleToken"
-import { LinkButton } from "chakra-next-link"
 import { Confirm, useConfirm } from "app/components/Confirm"
 
 export const Section: React.FC<{

@@ -3,6 +3,8 @@ import { BlitzPage, useRouter } from "blitz"
 import { useForm } from "react-hook-form"
 import { User } from "@prisma/client"
 import { Spinner, Divider, Heading, VStack, Button, Flex, Stack, Box } from "@chakra-ui/core"
+import { LinkButton } from "chakra-next-link"
+
 import Layout from "app/layouts/Layout"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { Input } from "app/components/Input"
@@ -11,7 +13,6 @@ import updateUser from "app/auth/mutations/updateUser"
 import { useDebounce } from "app/hooks/useDebounce"
 import isCurrentPasswordOk from "app/auth/mutations/isCurrentPasswordOk"
 import { Section } from "."
-import { LinkButton } from "chakra-next-link"
 
 type UserFormData = Pick<User, "name">
 const PasswordFields = ["password", "confirm_password", "current_password"] as const
