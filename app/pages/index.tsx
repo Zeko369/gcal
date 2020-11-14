@@ -35,7 +35,7 @@ const format = (n: number) => Math.round(n * 100) / 100
 
 const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
   const { state } = useStore()
-  const [{ data }] = useQuery(getGoogleCalendarEvents, {
+  const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, {
     calendarId: calendar.uuid,
     timeMin: timeMin(state.date),
     timeMax: timeMax(state.date),
@@ -59,6 +59,33 @@ const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
         </strong>
       </Heading>
       <Text>Count: {data.formatted.length}</Text>
+      <Button onClick={refetch}>reload</Button>
+    </VStack>
+  )
+}
+
+const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
+  return (
+    <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
+      <Flex justify="space-between" w="100%">
+        <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
+          <Heading size="lg">{calendar.name}</Heading>
+        </Link>
+        <HStack>
+          <LinkIconButton
+            size="xs"
+            colorScheme="green"
+            icon={<EditIcon />}
+            href="/calendars/[id]/edit"
+            nextAs={`/calendars/${calendar.id}/edit`}
+            aria-label="edit"
+          />
+          <IconButton size="xs" colorScheme="red" icon={<DeleteIcon />} aria-label="delete" />
+        </HStack>
+      </Flex>
+      <Suspense fallback={<Spinner />}>
+        <CalendarEvents calendar={calendar} />
+      </Suspense>
     </VStack>
   )
 }
@@ -145,27 +172,7 @@ const HomePage: React.FC = () => {
       </Flex>
       <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3}>
         {calendars.map((calendar) => (
-          <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
-            <Flex justify="space-between" w="100%">
-              <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
-                <Heading size="lg">{calendar.name}</Heading>
-              </Link>
-              <HStack>
-                <LinkIconButton
-                  size="xs"
-                  colorScheme="green"
-                  icon={<EditIcon />}
-                  href="/calendars/[id]/edit"
-                  nextAs={`/calendars/${calendar.id}/edit`}
-                  aria-label="edit"
-                />
-                <IconButton size="xs" colorScheme="red" icon={<DeleteIcon />} aria-label="delete" />
-              </HStack>
-            </Flex>
-            <Suspense fallback={<Spinner />}>
-              <CalendarEvents calendar={calendar} />
-            </Suspense>
-          </VStack>
+          <CalendarCard calendar={calendar} />
         ))}
       </SimpleGrid>
     </Box>
