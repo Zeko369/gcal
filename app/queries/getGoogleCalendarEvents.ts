@@ -38,38 +38,52 @@ const getGoogleCalendarEvents = async (
   })
 
   const formatted =
-    events.data.items?.map((event, i) => {
-      if (event.start?.date) {
-        const start = new Date(event.start.date)
-        const end = new Date(event.end?.date || "")
+    events.data.items
+      ?.filter((event) => {
+        if (event.attendees) {
+          if (
+            event.attendees.find(
+              (attendee) => attendee.self && attendee.responseStatus === "needsAction"
+            )
+          ) {
+            return false
+          }
+        }
+
+        return true
+      })
+      .map((event, i) => {
+        if (event.start?.date) {
+          const start = new Date(event.start.date)
+          const end = new Date(event.end?.date || "")
+          const time = (end.getTime() - start.getTime()) / 1000 / 60
+          const days = time / 60 / 24
+
+          return {
+            allDay: true,
+            summary: event.summary,
+            days,
+            time,
+            event,
+            start,
+            planned: start.getTime() > Date.now(),
+          }
+        }
+
+        const start = new Date(event.start?.dateTime || "")
+        const end = new Date(event.end?.dateTime || "")
         const time = (end.getTime() - start.getTime()) / 1000 / 60
-        const days = time / 60 / 24
 
         return {
-          allDay: true,
+          allDay: false,
           summary: event.summary,
-          days,
+          days: undefined,
           time,
           event,
           start,
           planned: start.getTime() > Date.now(),
         }
-      }
-
-      const start = new Date(event.start?.dateTime || "")
-      const end = new Date(event.end?.dateTime || "")
-      const time = (end.getTime() - start.getTime()) / 1000 / 60
-
-      return {
-        allDay: false,
-        summary: event.summary,
-        days: undefined,
-        time,
-        event,
-        start,
-        planned: start.getTime() > Date.now(),
-      }
-    }) || []
+      }) || []
 
   const all = formatted.filter((item) => !item.allDay).reduce((prev, curr) => prev + curr.time, 0)
 

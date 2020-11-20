@@ -1,4 +1,13 @@
-import React, { Suspense, useCallback, useMemo, useReducer } from "react"
+import React, {
+  ForwardRefRenderFunction,
+  Suspense,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react"
 import { BlitzPage, GetServerSideProps, useQuery } from "blitz"
 import {
   Spinner,
@@ -14,11 +23,12 @@ import {
   Button,
   Grid,
   useBreakpointValue,
+  forwardRef,
 } from "@chakra-ui/core"
 import { endOfWeek } from "date-fns"
 import { Calendar } from "@prisma/client"
-import { Link, LinkIconButton } from "chakra-next-link"
-import { ArrowLeftIcon, DeleteIcon, EditIcon, ArrowRightIcon } from "@chakra-ui/icons"
+import { Link } from "chakra-next-link"
+import { ArrowLeftIcon, ArrowRightIcon, RepeatIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
 import { parseCookies, setCookie } from "nookies"
 
 import { initialState, reducer, setValueScale, StoreContext, Store } from "app/lib/reducer"
@@ -33,13 +43,19 @@ import { cookieOptions } from "app/lib/cookie"
 
 const format = (n: number) => Math.round(n * 100) / 100
 
-const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
+type CalendarEventsProps = { calendar: Calendar }
+const CalendarEvents = forwardRef(({ calendar }, ref) => {
   const { state } = useStore()
+
   const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, {
     calendarId: calendar.uuid,
     timeMin: timeMin(state.date),
     timeMax: timeMax(state.date),
   })
+
+  useImperativeHandle(ref, () => ({
+    refetch,
+  }))
 
   if (!data) {
     return (
@@ -59,32 +75,41 @@ const CalendarEvents: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
         </strong>
       </Heading>
       <Text>Count: {data.formatted.length}</Text>
-      <Button onClick={refetch}>reload</Button>
     </VStack>
   )
-}
+})
 
 const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
+  const [visible, setVisible] = useState(false)
+  const ref = useRef(null)
+
+  const refetch = () => {}
+
   return (
     <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
       <Flex justify="space-between" w="100%">
         <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
           <Heading size="lg">{calendar.name}</Heading>
         </Link>
-        <HStack>
-          <LinkIconButton
+        <HStack ml="2">
+          <IconButton
             size="xs"
-            colorScheme="green"
-            icon={<EditIcon />}
-            href="/calendars/[id]/edit"
-            nextAs={`/calendars/${calendar.id}/edit`}
-            aria-label="edit"
+            icon={visible ? <ViewIcon /> : <ViewOffIcon />}
+            colorScheme="blue"
+            aria-label="toggle show events"
+            onClick={() => setVisible((v) => !v)}
           />
-          <IconButton size="xs" colorScheme="red" icon={<DeleteIcon />} aria-label="delete" />
+          <IconButton
+            size="xs"
+            icon={<RepeatIcon />}
+            colorScheme="blue"
+            aria-label="refresh"
+            onClick={refetch}
+          />
         </HStack>
       </Flex>
       <Suspense fallback={<Spinner />}>
-        <CalendarEvents calendar={calendar} />
+        <CalendarEvents calendar={calendar} ref={ref} />
       </Suspense>
     </VStack>
   )
