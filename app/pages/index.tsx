@@ -99,7 +99,7 @@ const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
           <IconButton
             size="xs"
             icon={visible ? <ViewIcon /> : <ViewOffIcon />}
-            colorScheme="blue"
+            colorScheme="gray"
             aria-label="toggle show events"
             onClick={() => setVisible((v) => !v)}
           />
@@ -201,7 +201,7 @@ const HomePage: React.FC = () => {
       </Flex>
       <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3}>
         {calendars.map((calendar) => (
-          <CalendarCard calendar={calendar} />
+          <CalendarCard calendar={calendar} key={calendar.id} />
         ))}
       </SimpleGrid>
     </Box>
