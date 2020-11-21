@@ -44,7 +44,7 @@ import { cookieOptions } from "app/lib/cookie"
 const format = (n: number) => Math.round(n * 100) / 100
 
 type CalendarEventsProps = { calendar: Calendar }
-const CalendarEvents = forwardRef(({ calendar }, ref) => {
+const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
   const { state } = useStore()
 
   const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, {
@@ -83,7 +83,11 @@ const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
   const [visible, setVisible] = useState(false)
   const ref = useRef(null)
 
-  const refetch = () => {}
+  const refetch = async () => {
+    if (ref.current) {
+      await (ref.current as any).refetch()
+    }
+  }
 
   return (
     <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
