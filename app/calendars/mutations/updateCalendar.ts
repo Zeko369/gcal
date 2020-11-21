@@ -1,15 +1,14 @@
-import { Ctx } from "app/ts"
 import db, { CalendarUpdateArgs } from "db"
+import { Ctx } from "@blitzjs/core"
 
 type UpdateCalendarInput = {
   where: CalendarUpdateArgs["where"]
   data: CalendarUpdateArgs["data"]
 }
-const updateCalendar = async ({ where, data }: UpdateCalendarInput, ctx: Ctx = {}) => {
-  ctx.session!.authorize()
+const updateCalendar = async ({ where, data }: UpdateCalendarInput, ctx: Ctx) => {
+  ctx.session.authorize()
 
-  const calendar = await db.calendar.update({ where, data })
-  return calendar
+  return await db.calendar.update({ where, data })
 }
 
 export default updateCalendar

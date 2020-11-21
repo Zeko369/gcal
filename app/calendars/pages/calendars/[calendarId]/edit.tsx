@@ -18,8 +18,8 @@ export const EditCalendar = () => {
         where: { id: calendar.id },
         data,
       })
-      mutate(updated)
-      router.push("/calendars/[calendarId]", `/calendars/${updated.id}`)
+      await mutate(updated)
+      await router.push("/calendars/[calendarId]", `/calendars/${updated.id}`)
     } catch (error) {
       console.error(error)
     }
@@ -28,7 +28,7 @@ export const EditCalendar = () => {
   return (
     <>
       <Heading>Edit Calendar {calendar.id}</Heading>
-      <CalendarForm initialValues={calendar} onSubmit={onSubmit} />
+      <CalendarForm initialValues={calendar} onSubmit={onSubmit} update />
     </>
   )
 }

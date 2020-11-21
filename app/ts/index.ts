@@ -1,5 +1,9 @@
-import { SessionContext } from "blitz"
+import { DefaultCtx, SessionContext, DefaultPublicData } from "blitz"
 
-export interface Ctx {
-  session?: SessionContext
+declare module "blitz" {
+  export interface Ctx extends DefaultCtx {
+    session: SessionContext
+  }
+
+  export interface PublicData extends DefaultPublicData {}
 }

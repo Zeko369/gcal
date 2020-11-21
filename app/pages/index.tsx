@@ -90,7 +90,15 @@ const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
   }
 
   return (
-    <VStack p="4" pt="2" shadow="md" borderWidth="1px" key={calendar.id} align="flex-start">
+    <VStack
+      p="4"
+      pt="2"
+      shadow="md"
+      borderWidth="1px"
+      key={calendar.id}
+      align="flex-start"
+      bg={calendar.color ? `${calendar.color}.300` : undefined}
+    >
       <Flex justify="space-between" w="100%">
         <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
           <Heading size="lg">{calendar.name}</Heading>
