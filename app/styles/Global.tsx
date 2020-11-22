@@ -1,28 +1,29 @@
-import { Global as GlobalStyles, css } from "@emotion/core"
+import { Global as GlobalStyles, css } from "@emotion/react"
 
 export const globalStyles = css`
-  html {
-    height: -webkit-fill-available;
+  * {
+    box-sizing: border-box !important;
+    flex-shrink: 0;
   }
 
-  body {
+  body,
+  html,
+  #__next {
+    min-width: 100vw;
+    max-width: 100vw;
+    width: 100vw;
+    overflow-x: hidden;
     min-height: 100vh;
-    min-height: -webkit-fill-available;
   }
 
   #__next {
-    min-height: 100vh;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
+    display: grid;
   }
 
-  /* Because Safari */
-  @media not all and (min-resolution: 0.001dpcm) {
-    @supports (-webkit-appearance: none) and (stroke-color: transparent) {
-      #__next {
-        min-height: -webkit-fill-available;
-      }
+  @supports (-webkit-touch-callout: none) {
+    #__next {
+      min-height: -webkit-fill-available;
+      max-height: -webkit-fill-available;
     }
   }
 `

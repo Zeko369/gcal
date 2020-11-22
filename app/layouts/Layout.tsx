@@ -1,6 +1,6 @@
 import React, { ReactNode, Suspense } from "react"
 import { Head, useSession } from "blitz"
-import { HStack, Flex, Box, Heading, Avatar, Button, Spinner, Grid } from "@chakra-ui/core"
+import { HStack, Flex, Box, Heading, Avatar, Button, Spinner, Grid } from "@chakra-ui/react"
 import { Link, LinkButton } from "chakra-next-link"
 import NextLink from "next/link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
@@ -71,7 +71,7 @@ const Layout = ({ title, children }: LayoutProps) => {
       </Head>
 
       {/* Main */}
-      <Box as="main">
+      <Box as="main" height="calc(100vh - 56px)">
         <Nav />
         <Box w="1000px" maxW="90%" m="0 auto" my="4" pb="10">
           {children}

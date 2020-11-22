@@ -1,7 +1,7 @@
 import React from "react"
 import { AppProps, ErrorComponent, useRouter } from "blitz"
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
-import { ChakraProvider } from "@chakra-ui/core"
+import { ChakraProvider } from "@chakra-ui/react"
 import { queryCache } from "react-query"
 import LoginForm from "app/auth/components/LoginForm"
 import { Global } from "app/styles/Global"
