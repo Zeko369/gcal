@@ -6,7 +6,7 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   Button,
-} from "@chakra-ui/core"
+} from "@chakra-ui/react"
 import React, { useState, useRef } from "react"
 
 export const useConfirm = () => {

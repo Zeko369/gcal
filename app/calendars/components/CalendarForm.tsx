@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel, Select, Stack, useTheme } from "@chakra-ui/core"
+import { Button, FormControl, FormLabel, Select, Stack, useTheme } from "@chakra-ui/react"
 import { Input } from "app/components/Input"
 import React from "react"
 import { useForm } from "react-hook-form"

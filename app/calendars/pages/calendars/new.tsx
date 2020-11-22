@@ -1,6 +1,6 @@
 import React, { Suspense, useState } from "react"
 import { Head, useRouter, BlitzPage } from "blitz"
-import { Spinner, Heading } from "@chakra-ui/core"
+import { Spinner, Heading } from "@chakra-ui/react"
 import Layout from "app/layouts/Layout"
 import { ListGcal } from "app/calendars/components/ListGcal"
 import { CalendarForm, CalendarFormData } from "../../components/CalendarForm"

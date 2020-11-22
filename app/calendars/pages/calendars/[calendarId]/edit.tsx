@@ -5,7 +5,7 @@ import { Link } from "chakra-next-link"
 import getCalendar from "app/calendars/queries/getCalendar"
 import updateCalendar from "app/calendars/mutations/updateCalendar"
 import { CalendarForm, CalendarFormData } from "app/calendars/components/CalendarForm"
-import { Heading } from "@chakra-ui/core"
+import { Heading } from "@chakra-ui/react"
 
 export const EditCalendar = () => {
   const router = useRouter()

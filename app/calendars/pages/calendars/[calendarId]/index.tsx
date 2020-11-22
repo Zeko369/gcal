@@ -1,12 +1,12 @@
 import React, { Suspense } from "react"
 import { LinkIconButton } from "chakra-next-link"
-import { Heading, IconButton, Spinner, Flex, HStack } from "@chakra-ui/core"
+import { Heading, IconButton, Spinner, Flex, HStack } from "@chakra-ui/react"
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons"
-import { Head, useRouter, useQuery, useParam, BlitzPage } from "blitz"
+import { Head, useRouter, useQuery, useParam, BlitzPage, useMutation } from "blitz"
 
 import Layout from "app/layouts/Layout"
 import getCalendar from "app/calendars/queries/getCalendar"
-import deleteCalendar from "app/calendars/mutations/deleteCalendar"
+import deleteCalendarFn from "app/calendars/mutations/deleteCalendar"
 import Table from "app/components/Table"
 import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
 
@@ -58,6 +58,8 @@ export const Calendar = () => {
   const calendarId = useParam("calendarId", "number")
   const [calendar] = useQuery(getCalendar, { where: { id: calendarId } })
 
+  const [deleteCalendar] = useMutation(deleteCalendarFn)
+
   return (
     <>
       <Flex justify="space-between">
@@ -70,7 +72,7 @@ export const Calendar = () => {
             onClick={async () => {
               if (window.confirm("This will be deleted")) {
                 await deleteCalendar({ where: { id: calendar.id } })
-                router.push("/calendars")
+                await router.push("/calendars")
               }
             }}
           >

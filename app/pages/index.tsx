@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useReducer,
   useRef,
-  useState,
 } from "react"
 import { BlitzPage, GetServerSideProps, useQuery } from "blitz"
 import {
@@ -23,11 +22,23 @@ import {
   Text,
   useBreakpointValue,
   VStack,
-} from "@chakra-ui/core"
+  useDisclosure,
+  UseDisclosureReturn,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalOverlay,
+  ModalHeader,
+  ModalContent,
+  ModalFooter,
+  List,
+  ListItem,
+  ListIcon,
+} from "@chakra-ui/react"
 import { endOfWeek } from "date-fns"
 import { Calendar } from "@prisma/client"
 import { Link } from "chakra-next-link"
-import { ArrowLeftIcon, ArrowRightIcon, RepeatIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
+import { ArrowLeftIcon, ArrowRightIcon, RepeatIcon, ViewIcon } from "@chakra-ui/icons"
 import { parseCookies, setCookie } from "nookies"
 
 import {
@@ -51,9 +62,57 @@ import { cookieOptions } from "app/lib/cookie"
 
 const format = (n: number) => Math.round(n * 100) / 100
 
+interface EventModalProps {
+  modal: UseDisclosureReturn
+}
+
+const CheckIcon: React.FC<{ value: boolean }> = ({ value }) => {
+  return <i className="material-icons">{`check_box${value ? "_outline_blank" : ""}`}</i>
+}
+
+const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
+  const { state } = useStore()
+
+  console.log(state)
+
+  return (
+    <Modal isOpen={modal.isOpen} onClose={modal.onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        {state.calendar ? (
+          <>
+            <ModalHeader>{state.calendar.name}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <List spacing={2}>
+                {state.events.map((event) => (
+                  <ListItem d="flex">
+                    <ListIcon as={() => <CheckIcon value={event.planned} />} color="green.500" />
+                    {event.summary}
+                    <br />
+                    {`${new Date(event.start).toDateString()} => [${event.time / 60}h]`}
+                  </ListItem>
+                ))}
+              </List>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={modal.onClose}>
+                Close
+              </Button>
+            </ModalFooter>
+          </>
+        ) : (
+          <ModalHeader>Error </ModalHeader>
+        )}
+      </ModalContent>
+    </Modal>
+  )
+}
+
 type CalendarEventsProps = { calendar: Calendar }
 const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
-  const { state } = useStore()
+  const { state, dispatch } = useStore()
 
   const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, {
     calendarId: calendar.uuid,
@@ -61,7 +120,10 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
     timeMax: timeMax(state.date),
   })
 
-  useImperativeHandle(ref, () => ({ refetch }))
+  useImperativeHandle(ref, () => ({
+    refetch,
+    setEvents: () => dispatch({ type: "setEvents", payload: { calendar, events: data.formatted } }),
+  }))
 
   if (!data) {
     return (
@@ -85,13 +147,24 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
   )
 })
 
-const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
-  const [visible, setVisible] = useState(false)
+interface CalendarCardProps {
+  calendar: Calendar
+  openModal?: () => void
+}
+
+const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal }) => {
   const ref = useRef(null)
 
   const refetch = async () => {
     if (ref.current) {
       await (ref.current as any).refetch()
+    }
+  }
+
+  const onView = () => {
+    if (ref.current) {
+      ;(ref.current as any).setEvents()
+      openModal?.()
     }
   }
 
@@ -115,18 +188,11 @@ const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
         <HStack ml="2">
           <IconButton
             size="xs"
-            icon={visible ? <ViewIcon /> : <ViewOffIcon />}
-            colorScheme="gray"
+            icon={<ViewIcon />}
             aria-label="toggle show events"
-            onClick={() => setVisible((v) => !v)}
+            onClick={onView}
           />
-          <IconButton
-            size="xs"
-            icon={<RepeatIcon />}
-            colorScheme="blue"
-            aria-label="refresh"
-            onClick={refetch}
-          />
+          <IconButton size="xs" icon={<RepeatIcon />} aria-label="refresh" onClick={refetch} />
         </HStack>
       </Flex>
 
@@ -182,7 +248,7 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({ label, Icon, action
 
 const HomePage: React.FC = () => {
   const [{ calendars }] = useQuery(getCalendarsDB, {})
-  const { dispatch, state } = useStore()
+  const { dispatch, state, modal } = useStore()
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -219,7 +285,7 @@ const HomePage: React.FC = () => {
       </Flex>
       <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3} mt="4">
         {calendars.map((calendar) => (
-          <CalendarCard calendar={calendar} key={calendar.id} />
+          <CalendarCard calendar={calendar} key={calendar.id} openModal={modal?.onOpen} />
         ))}
       </SimpleGrid>
     </Box>
@@ -255,9 +321,11 @@ const init = (date: HomeProps["date"]): Store["state"] => {
 
 const Home: BlitzPage<HomeProps> = ({ date }) => {
   const [state, dispatch] = useReducer<typeof reducer, HomeProps["date"]>(reducer, date, init)
+  const modal = useDisclosure()
 
   return (
-    <StoreContext.Provider value={{ dispatch, state }}>
+    <StoreContext.Provider value={{ dispatch, state, modal }}>
+      <EventsModal modal={modal} />
       <Suspense fallback={() => <Spinner />}>
         <Main />
       </Suspense>

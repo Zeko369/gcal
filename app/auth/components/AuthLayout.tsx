@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from "react"
-import { Box, Heading, useColorModeValue } from "@chakra-ui/core"
+import { Box, Heading, useColorModeValue } from "@chakra-ui/react"
 
 type AuthAction =
   | { type: "reset" }

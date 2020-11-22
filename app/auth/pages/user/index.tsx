@@ -9,7 +9,7 @@ import {
   Text,
   useColorMode,
   Flex,
-} from "@chakra-ui/core"
+} from "@chakra-ui/react"
 import { MoonIcon, SunIcon } from "@chakra-ui/icons"
 import { LinkButton } from "chakra-next-link"
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useContext, useEffect, useMemo } from "react"
 import { Link, LinkButton } from "chakra-next-link"
 import signup from "app/auth/mutations/signup"
-import { Button, Flex, Heading, Stack } from "@chakra-ui/core"
+import { Button, Flex, Heading, Stack } from "@chakra-ui/react"
 import { Control, useForm, useWatch } from "react-hook-form"
 import { Input } from "app/components/Input"
 import { AuthContext } from "./AuthLayout"

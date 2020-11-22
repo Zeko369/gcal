@@ -1,6 +1,6 @@
 import React, { useCallback } from "react"
 import { useQuery } from "blitz"
-import { Heading, ListItem, UnorderedList, Text } from "@chakra-ui/core"
+import { Heading, ListItem, UnorderedList, Text } from "@chakra-ui/react"
 import getGoogleCalendars from "app/queries/getGoogleCalendars"
 import getCalendars from "app/calendars/queries/getCalendars"
 import { RestGoogleToken } from "app/components/RestGoogleToken"

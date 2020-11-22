@@ -2,7 +2,7 @@ import React, { Suspense, useEffect, useState } from "react"
 import { BlitzPage, useRouter } from "blitz"
 import { useForm } from "react-hook-form"
 import { User } from "@prisma/client"
-import { Spinner, Divider, Heading, VStack, Button, Flex, Stack, Box } from "@chakra-ui/core"
+import { Spinner, Divider, Heading, VStack, Button, Flex, Stack, Box } from "@chakra-ui/react"
 import { LinkButton } from "chakra-next-link"
 
 import Layout from "app/layouts/Layout"
