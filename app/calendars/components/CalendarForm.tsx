@@ -1,10 +1,12 @@
-import { Button, color, Select, Stack, useTheme } from "@chakra-ui/core"
+import { Button, FormControl, FormLabel, Select, Stack, useTheme } from "@chakra-ui/core"
 import { Input } from "app/components/Input"
 import React from "react"
 import { useForm } from "react-hook-form"
 
 export interface CalendarFormData {
   name: string
+  order?: number
+  color?: string
 }
 
 interface CalendarFormProps {
@@ -12,7 +14,6 @@ interface CalendarFormProps {
   disabled?: boolean
   onSubmit: (data: CalendarFormData) => Promise<void>
   update?: boolean
-  color?: string
 }
 
 const ignoreColors = ["transparent"]
@@ -32,11 +33,17 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack>
         <Input name="name" ref={register({ required: true })} isRequired />
-        <Select ref={register({ required: true })} isRequired name="color" bg={`${color}.300`}>
-          {colors.map((color) => (
-            <option value={color}>{color}</option>
-          ))}
-        </Select>
+        <FormControl isRequired>
+          <FormLabel htmlFor="color">Color</FormLabel>
+          <Select ref={register({ required: true })} isRequired name="color" bg={`${color}.300`}>
+            {colors.map((color) => (
+              <option value={color}>{color}</option>
+            ))}
+          </Select>
+        </FormControl>
+        {update && (
+          <Input name="order" ref={register({ required: true })} isRequired type="number" />
+        )}
         {children}
         <Button
           colorScheme="green"

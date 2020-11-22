@@ -1,16 +1,15 @@
-import { Ctx } from "app/ts"
 import db, { CalendarCreateArgs } from "db"
+import { Ctx } from "@blitzjs/core"
 
 type CreateCalendarInput = {
   data: Omit<CalendarCreateArgs["data"], "user">
 }
-const createCalendar = async ({ data }: CreateCalendarInput, ctx: Ctx = {}) => {
-  ctx.session!.authorize()
+const createCalendar = async ({ data }: CreateCalendarInput, ctx: Ctx) => {
+  ctx.session.authorize()
 
-  const calendar = await db.calendar.create({
+  return await db.calendar.create({
     data: { ...data, user: { connect: { id: ctx.session!.userId } } },
   })
-  return calendar
 }
 
 export default createCalendar

@@ -1,5 +1,5 @@
-import { Ctx } from "app/ts"
 import db, { FindManyCalendarArgs } from "db"
+import { Ctx } from "@blitzjs/core"
 
 type GetCalendarsInput = {
   where?: FindManyCalendarArgs["where"]
@@ -8,13 +8,13 @@ type GetCalendarsInput = {
   take?: FindManyCalendarArgs["take"]
 }
 
-const getCalendars = async (input: GetCalendarsInput, ctx: Ctx = {}) => {
-  ctx.session!.authorize()
+const getCalendars = async (input: GetCalendarsInput, ctx: Ctx) => {
+  ctx.session.authorize()
 
   const { where, orderBy, skip = 0, take } = input
   const calendars = await db.calendar.findMany({
     where: { ...where, userId: { equals: ctx.session!.userId } },
-    orderBy,
+    orderBy: [...(Array.isArray(orderBy) ? orderBy : orderBy ? [orderBy] : []), { order: "asc" }],
     take,
     skip,
   })

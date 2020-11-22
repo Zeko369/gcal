@@ -1,14 +1,13 @@
-import { Ctx } from "app/ts"
 import db, { CalendarDeleteArgs } from "db"
+import { Ctx } from "@blitzjs/core"
 
 type DeleteCalendarInput = {
   where: CalendarDeleteArgs["where"]
 }
-const deleteCalendar = async ({ where }: DeleteCalendarInput, ctx: Ctx = {}) => {
-  ctx.session!.authorize()
+const deleteCalendar = async ({ where }: DeleteCalendarInput, ctx: Ctx) => {
+  ctx.session.authorize()
 
-  const calendar = await db.calendar.delete({ where })
-  return calendar
+  return await db.calendar.delete({ where })
 }
 
 export default deleteCalendar

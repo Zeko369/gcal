@@ -1,5 +1,4 @@
 import React, {
-  ForwardRefRenderFunction,
   Suspense,
   useCallback,
   useImperativeHandle,
@@ -10,20 +9,20 @@ import React, {
 } from "react"
 import { BlitzPage, GetServerSideProps, useQuery } from "blitz"
 import {
-  Spinner,
-  Heading,
-  Text,
-  VStack,
-  Flex,
-  IconButton,
-  HStack,
-  SimpleGrid,
   Box,
-  Select,
   Button,
-  Grid,
-  useBreakpointValue,
+  Flex,
   forwardRef,
+  Grid,
+  Heading,
+  HStack,
+  IconButton,
+  Select,
+  SimpleGrid,
+  Spinner,
+  Text,
+  useBreakpointValue,
+  VStack,
 } from "@chakra-ui/core"
 import { endOfWeek } from "date-fns"
 import { Calendar } from "@prisma/client"
@@ -31,13 +30,22 @@ import { Link } from "chakra-next-link"
 import { ArrowLeftIcon, ArrowRightIcon, RepeatIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
 import { parseCookies, setCookie } from "nookies"
 
-import { initialState, reducer, setValueScale, StoreContext, Store } from "app/lib/reducer"
+import {
+  initialState,
+  intervals,
+  reducer,
+  Scale,
+  Scales,
+  setValueScale,
+  Store,
+  StoreContext,
+  useStore,
+} from "app/lib/reducer"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
 import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
-import { useStore, Scale, Scales, intervals } from "app/lib/reducer"
-import { timeMin, timeMax } from "app/lib/time"
+import { timeMax, timeMin } from "app/lib/time"
 import { RestGoogleToken } from "app/components/RestGoogleToken"
 import { cookieOptions } from "app/lib/cookie"
 
@@ -53,9 +61,7 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
     timeMax: timeMax(state.date),
   })
 
-  useImperativeHandle(ref, () => ({
-    refetch,
-  }))
+  useImperativeHandle(ref, () => ({ refetch }))
 
   if (!data) {
     return (
@@ -68,13 +74,13 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
 
   return (
     <VStack align="flex-start" spacing="1">
-      <Heading fontSize="lg">
+      <Heading fontSize="lg" color="black">
         Hours:{" "}
         <strong>
           {format(data.soFar / 60)}h [{format(data.all / 60)}]
         </strong>
       </Heading>
-      <Text>Count: {data.formatted.length}</Text>
+      <Text color="black">Count: {data.formatted.length}</Text>
     </VStack>
   )
 })
@@ -95,13 +101,16 @@ const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
       pt="2"
       shadow="md"
       borderWidth="1px"
-      key={calendar.id}
+      borderRadius="md"
       align="flex-start"
       bg={calendar.color ? `${calendar.color}.300` : undefined}
+      key={calendar.id}
     >
       <Flex justify="space-between" w="100%">
         <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
-          <Heading size="lg">{calendar.name}</Heading>
+          <Heading size="lg" color="black">
+            {calendar.name}
+          </Heading>
         </Link>
         <HStack ml="2">
           <IconButton
@@ -120,6 +129,7 @@ const CalendarCard: React.FC<{ calendar: Calendar }> = ({ calendar }) => {
           />
         </HStack>
       </Flex>
+
       <Suspense fallback={<Spinner />}>
         <CalendarEvents calendar={calendar} ref={ref} />
       </Suspense>
@@ -199,7 +209,7 @@ const HomePage: React.FC = () => {
         </Select>
         <NavigationButton label="Next" Icon={<ArrowRightIcon />} action="val++" />
       </Grid>
-      <Flex justify="space-between">
+      <Flex justify="space-between" align="center">
         <Heading size="md" mb="2">
           {date}
         </Heading>
@@ -207,7 +217,7 @@ const HomePage: React.FC = () => {
           Reset
         </Button>
       </Flex>
-      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3}>
+      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3} mt="4">
         {calendars.map((calendar) => (
           <CalendarCard calendar={calendar} key={calendar.id} />
         ))}
@@ -263,8 +273,8 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (ctx) => 
     if (!cookies.value) {
       throw new Error("noCookie")
     }
-    const value = new Date(cookies.value)
-    output.value = value.toISOString()
+
+    output.value = new Date(cookies.value).toISOString()
   } catch (err) {
     if (!(err instanceof Error && err.message === "noCookie")) {
       console.error(err)
@@ -282,8 +292,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (ctx) => 
       throw new Error("Scale not found")
     }
 
-    const scale = cookies.scale as Scale
-    output.scale = scale
+    output.scale = cookies.scale as Scale
   } catch (err) {
     if (!(err instanceof Error && err.message === "noScale")) {
       console.error(err)
