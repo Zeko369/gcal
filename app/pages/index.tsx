@@ -38,6 +38,8 @@ import {
 import { endOfWeek } from "date-fns"
 import { Calendar } from "@prisma/client"
 import { Link } from "chakra-next-link"
+import { ParsedUrlQuery } from "querystring"
+import { GetServerSidePropsContext } from "next"
 import { ArrowLeftIcon, ArrowRightIcon, RepeatIcon, ViewIcon } from "@chakra-ui/icons"
 import { parseCookies, setCookie } from "nookies"
 
@@ -46,7 +48,6 @@ import {
   intervals,
   reducer,
   Scale,
-  Scales,
   setValueScale,
   Store,
   StoreContext,
@@ -88,9 +89,9 @@ const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
                 {state.events.map((event) => (
                   <ListItem d="flex">
                     <ListIcon as={() => <CheckIcon value={event.planned} />} color="green.500" />
-                    {event.summary}
-                    <br />
                     {`${new Date(event.start).toDateString()} => [${event.time / 60}h]`}
+                    <br />
+                    {event.summary}
                   </ListItem>
                 ))}
               </List>
@@ -333,43 +334,38 @@ const Home: BlitzPage<HomeProps> = ({ date }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async (ctx) => {
-  const cookies = parseCookies(ctx)
-  const output: HomeProps["date"] = {}
-
+const handleCookie = <T extends Date | String | Scale>(
+  cookies: Record<string, string>,
+  ctx: GetServerSidePropsContext<ParsedUrlQuery>,
+  key: string,
+  handle: (val: any) => T,
+  defaultValue: string
+): T | undefined => {
   try {
-    if (!cookies.value) {
+    if (!cookies[key]) {
       throw new Error("noCookie")
     }
 
-    output.value = new Date(cookies.value).toISOString()
+    const val = handle(cookies[key])
+    setCookie(ctx, key, val.toString(), cookieOptions)
+
+    return val
   } catch (err) {
     if (!(err instanceof Error && err.message === "noCookie")) {
       console.error(err)
     }
 
-    setCookie(ctx, "value", initialState.date.value.toISOString(), cookieOptions)
+    setCookie(ctx, key, defaultValue, cookieOptions)
   }
+}
 
-  try {
-    if (!cookies.scale) {
-      throw new Error("noScale")
-    }
+const d = (val: string | Date) => new Date(val).toISOString()
+export const getServerSideProps: GetServerSideProps<HomeProps> = async (ctx) => {
+  const c = parseCookies(ctx)
+  const output: HomeProps["date"] = {}
 
-    if (!Scales.includes(cookies.scale as Scale)) {
-      throw new Error("Scale not found")
-    }
-
-    output.scale = cookies.scale as Scale
-  } catch (err) {
-    if (!(err instanceof Error && err.message === "noScale")) {
-      console.error(err)
-    }
-
-    setCookie(ctx, "scale", initialState.date.scale, cookieOptions)
-  }
-
-  !cookies.scale && setCookie(ctx, "scale", initialState.date.scale, cookieOptions)
+  output.value = handleCookie(c, ctx, "value", (val) => d(val), d(initialState.date.value))
+  output.scale = handleCookie(c, ctx, "scale", (val) => val as Scale, initialState.date.scale)
 
   return { props: { date: output } }
 }
