@@ -27,12 +27,15 @@ const getGoogleCalendarEvents = async (
   const client = getClient()
   client.setCredentials(JSON.parse(user.googleToken))
 
+  const timeMinFull = timeMin || startOfMonth(new Date())
+  const timeMaxFull = timeMax || endOfMonth(new Date())
+
   const calendar = google.calendar({ version: "v3", auth: client })
   const events = await calendar.events.list({
     calendarId,
     maxResults: 1000,
-    timeMin: (timeMin || startOfMonth(new Date())).toISOString(),
-    timeMax: (timeMax || endOfMonth(new Date())).toISOString(),
+    timeMin: timeMinFull.toISOString(),
+    timeMax: timeMaxFull.toISOString(),
     singleEvents: true,
     orderBy: "startTime",
   })
@@ -51,6 +54,16 @@ const getGoogleCalendarEvents = async (
         }
 
         return true
+      })
+      .filter((event) => {
+        if (event.start?.dateTime) {
+          const start = new Date(event.start?.dateTime || "")
+          if (start) {
+            return start.getTime() > timeMinFull.getTime()
+          }
+        }
+
+        return false
       })
       .map((event, i) => {
         if (event.start?.date) {
