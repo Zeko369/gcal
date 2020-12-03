@@ -42,7 +42,12 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
           </Select>
         </FormControl>
         {update && (
-          <Input name="order" ref={register({ required: true })} isRequired type="number" />
+          <Input
+            name="order"
+            ref={register({ required: true, valueAsNumber: true })}
+            isRequired
+            type="number"
+          />
         )}
         {children}
         <Button

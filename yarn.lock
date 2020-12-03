@@ -4387,10 +4387,10 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
-chakra-next-link@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/chakra-next-link/-/chakra-next-link-0.0.5.tgz#9740e3490f130f5c07428218524fcd45f79afab6"
-  integrity sha512-IuRkNnVHXUhyTbt9do4B31tqU5Q37nzsO1KQQNO8nXl0sIvEdB42w/r8YCo8bdvkaFEWMiFB7W9GBaioOZgBEg==
+chakra-next-link@1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/chakra-next-link/-/chakra-next-link-1.0.4.tgz#ed9a41ebe82e81fb3a6e7eaee7cdaa62180627a4"
+  integrity sha512-GMrrdT3IRn4NoxtT+de+6fWCf9KMwlaLx4UNmBkhJqoa4UyeFSOmMao0AlFd+W02IwJTJIHSaJBvRmuAmkPlGQ==
 
 chalk@3.0.0, chalk@^3.0.0, chalk@~3.0.0:
   version "3.0.0"
@@ -10643,10 +10643,10 @@ react-focus-lock@2.4.1:
     use-callback-ref "^1.2.1"
     use-sidecar "^1.0.1"
 
-react-hook-form@6.8.3:
-  version "6.8.3"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-6.8.3.tgz#208f46b96ced2859e2a3465eef8125751e99e4ee"
-  integrity sha512-IsYcATD4fodv9BiwWBwiBHE50+IyvhpPTi+jIab4fQZLbDPJnN7YXnJ+/2oMXDJ94n+PnUs4wklr9pg8TNdOrQ==
+react-hook-form@6.12.2:
+  version "6.12.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-6.12.2.tgz#aa67f47da4730a7bce44768583bdf5b749eed521"
+  integrity sha512-O72E2DXyk7djFqyy6eYi5yESGweKe0CNHHPS0Mx4JazpLbE4Ox+66ldZ23f0J5ZN/krEjDWRD+hUfg5Shvfhtw==
 
 react-is@16.13.1, react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.6:
   version "16.13.1"
