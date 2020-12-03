@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 export interface CalendarFormData {
   name: string
   order?: number
-  color?: string
+  color?: string | null
 }
 
 interface CalendarFormProps {

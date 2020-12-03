@@ -16,10 +16,7 @@ export const EditCalendar = () => {
 
   const onSubmit = async (data: CalendarFormData) => {
     try {
-      const updated = await updateCalendar({
-        where: { id: calendar.id },
-        data,
-      })
+      const updated = await updateCalendar({ where: { id: calendar.id }, data })
       await mutate(updated)
       await router.push("/calendars/[calendarId]", `/calendars/${updated.id}`)
     } catch (error) {

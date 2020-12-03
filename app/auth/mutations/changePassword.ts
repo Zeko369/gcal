@@ -1,13 +1,13 @@
 import { hashPassword } from "app/auth/auth-utils"
-import { Ctx } from "app/ts"
+import { Ctx } from "blitz"
 import db from "db"
 import isCurrentPasswordOk from "./isCurrentPasswordOk"
 
 const changePassword = async (
   { current_password, password }: { current_password: string; password: string },
-  ctx: Ctx = {}
+  ctx: Ctx
 ) => {
-  ctx.session!.authorize()
+  ctx.session.authorize()
 
   const currentOk = await isCurrentPasswordOk(current_password, ctx)
 
