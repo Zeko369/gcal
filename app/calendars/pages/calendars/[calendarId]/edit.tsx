@@ -1,9 +1,9 @@
 import React, { Suspense } from "react"
 import Layout from "app/layouts/Layout"
-import { Head, useRouter, useQuery, useParam, BlitzPage } from "blitz"
+import { Head, useRouter, useQuery, useParam, BlitzPage, useMutation } from "blitz"
 import { Link } from "chakra-next-link"
 import getCalendar from "app/calendars/queries/getCalendar"
-import updateCalendar from "app/calendars/mutations/updateCalendar"
+import updateCalendarFn from "app/calendars/mutations/updateCalendar"
 import { CalendarForm, CalendarFormData } from "app/calendars/components/CalendarForm"
 import { Heading } from "@chakra-ui/react"
 
@@ -11,6 +11,8 @@ export const EditCalendar = () => {
   const router = useRouter()
   const calendarId = useParam("calendarId", "number")
   const [calendar, { mutate }] = useQuery(getCalendar, { where: { id: calendarId } })
+
+  const [updateCalendar] = useMutation(updateCalendarFn)
 
   const onSubmit = async (data: CalendarFormData) => {
     try {

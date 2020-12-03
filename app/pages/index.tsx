@@ -34,13 +34,15 @@ import {
   List,
   ListItem,
   ListIcon,
+  ColorMode,
+  useColorModeValue,
 } from "@chakra-ui/react"
 import { endOfWeek } from "date-fns"
 import { Calendar } from "@prisma/client"
-import { Link } from "chakra-next-link"
+import { Link, LinkIconButton } from "chakra-next-link"
 import { ParsedUrlQuery } from "querystring"
 import { GetServerSidePropsContext } from "next"
-import { ArrowLeftIcon, ArrowRightIcon, RepeatIcon, ViewIcon } from "@chakra-ui/icons"
+import { ArrowLeftIcon, ArrowRightIcon, EditIcon, RepeatIcon, ViewIcon } from "@chakra-ui/icons"
 import { parseCookies, setCookie } from "nookies"
 
 import {
@@ -74,8 +76,6 @@ const CheckIcon: React.FC<{ value: boolean }> = ({ value }) => {
 const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
   const { state } = useStore()
 
-  console.log(state)
-
   return (
     <Modal isOpen={modal.isOpen} onClose={modal.onClose}>
       <ModalOverlay />
@@ -87,7 +87,7 @@ const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
             <ModalBody>
               <List spacing={2}>
                 {state.events.map((event) => (
-                  <ListItem d="flex">
+                  <ListItem d="flex" key={event.id}>
                     <ListIcon as={() => <CheckIcon value={event.planned} />} color="green.500" />
                     {`${new Date(event.start).toDateString()} => [${event.time / 60}h]`}
                     <br />
@@ -115,11 +115,13 @@ type CalendarEventsProps = { calendar: Calendar }
 const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
   const { state, dispatch } = useStore()
 
-  const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, {
+  const args = {
     calendarId: calendar.uuid,
     timeMin: timeMin(state.date),
     timeMax: timeMax(state.date),
-  })
+  }
+
+  const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, args)
 
   useImperativeHandle(ref, () => ({
     refetch,
@@ -169,15 +171,16 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal }) => {
     }
   }
 
+  const bg = useColorModeValue("gray.100", "gray.700")
+
   return (
     <VStack
       p="4"
       pt="2"
       shadow="md"
-      borderWidth="1px"
       borderRadius="md"
       align="flex-start"
-      bg={calendar.color ? `${calendar.color}.300` : undefined}
+      bg={calendar.color ? `${calendar.color}.300` : bg}
       key={calendar.id}
     >
       <Flex justify="space-between" w="100%">
@@ -187,6 +190,12 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal }) => {
           </Heading>
         </Link>
         <HStack ml="2">
+          <LinkIconButton
+            size="xs"
+            icon={<EditIcon />}
+            aria-label="edit"
+            href={`/calendars/${calendar.id}/edit`}
+          />
           <IconButton
             size="xs"
             icon={<ViewIcon />}
