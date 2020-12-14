@@ -46,7 +46,7 @@ const getGoogleCalendarEvents = async (
         if (event.attendees) {
           if (
             event.attendees.find(
-              (attendee) => attendee.self && attendee.responseStatus === "needsAction"
+              (attendee) => attendee.self && attendee.responseStatus !== "accepted"
             )
           ) {
             return false
