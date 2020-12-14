@@ -1,5 +1,5 @@
 import React, { Suspense, useState } from "react"
-import { Head, useRouter, BlitzPage } from "blitz"
+import { Head, useRouter, BlitzPage, useMutation } from "blitz"
 import { Spinner, Heading } from "@chakra-ui/react"
 import Layout from "app/layouts/Layout"
 import { ListGcal } from "app/calendars/components/ListGcal"
@@ -11,13 +11,15 @@ const NewCalendarPage: BlitzPage = () => {
   const router = useRouter()
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
+  const [createCalendarMutation] = useMutation(createCalendar)
+
   const onSubmit = async (data: CalendarFormData) => {
     try {
       if (!selectedId) {
         return
       }
 
-      const calendar = await createCalendar({ data: { ...data, uuid: selectedId } })
+      const calendar = await createCalendarMutation({ data: { ...data, uuid: selectedId } })
       router.push("/calendars/[calendarId]", `/calendars/${calendar.id}`)
     } catch (error) {
       alert("Error creating calendar " + JSON.stringify(error, null, 2))

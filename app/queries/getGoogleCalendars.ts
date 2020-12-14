@@ -1,9 +1,9 @@
 import { google } from "googleapis"
 import { getClient } from "app/lib/gcal"
-import { SessionContext } from "blitz"
+import { Ctx } from "blitz"
 import db from "db"
 
-const getGoogleCalendars = async (input?: any, ctx: { session?: SessionContext } = {}) => {
+const getGoogleCalendars = async (input: any, ctx: Ctx) => {
   const userId = ctx.session?.userId as number
 
   const user = await db.user.findOne({ where: { id: userId } })

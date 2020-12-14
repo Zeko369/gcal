@@ -1,5 +1,5 @@
 import React, { ReactNode, Suspense } from "react"
-import { Head, useSession } from "blitz"
+import { Head, useMutation, useSession } from "blitz"
 import { HStack, Flex, Box, Heading, Avatar, Button, Spinner, Grid } from "@chakra-ui/react"
 import { Link, LinkButton } from "chakra-next-link"
 import NextLink from "next/link"
@@ -13,10 +13,11 @@ type LayoutProps = {
 
 const User: React.FC = () => {
   const [currentUser] = useCurrentUser()
+  const [logoutMutation] = useMutation(logout)
 
   return currentUser ? (
     <HStack alignItems="center">
-      <Button onClick={async () => await logout()}>Logout</Button>
+      <Button onClick={async () => await logoutMutation()}>Logout</Button>
       <NextLink href="/user">
         <Avatar name={currentUser?.name || ""} cursor="pointer" />
       </NextLink>

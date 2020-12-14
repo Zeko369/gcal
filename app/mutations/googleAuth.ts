@@ -1,13 +1,10 @@
 import { getClient, scopes } from "app/lib/gcal"
-import { SessionContext } from "blitz"
+import { Ctx } from "blitz"
 import { nanoid } from "nanoid"
 import db from "db"
 
-const googleAuth = async (
-  input?: { redirect?: string },
-  ctx: { session?: SessionContext } = {}
-) => {
-  const userId = ctx.session!.userId as number
+const googleAuth = async (input: { redirect?: string }, ctx: Ctx) => {
+  const userId = ctx.session.userId as number
   const token = nanoid()
 
   await db.user.update({ where: { id: userId }, data: { googleTokenRef: token } })

@@ -1,5 +1,5 @@
 import db from "db"
-import { Ctx } from "@blitzjs/core"
+import { Ctx } from "blitz"
 
 interface ReorderArguments {
   id: number

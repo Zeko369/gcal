@@ -1,5 +1,5 @@
 import React, { Suspense } from "react"
-import { BlitzPage } from "blitz"
+import { BlitzPage, useMutation } from "blitz"
 import {
   VStack,
   Heading,
@@ -50,8 +50,10 @@ const UserDetails: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   const confirmProps = useConfirm()
 
+  const [revokeGoogleTokenMutation] = useMutation(revokeGoogleToken)
+
   const revokeGoogle = async () => {
-    await revokeGoogleToken()
+    await revokeGoogleTokenMutation()
     refetch()
   }
 

@@ -5,6 +5,7 @@ import { Button, Flex, Heading, Stack } from "@chakra-ui/react"
 import { Control, useForm, useWatch } from "react-hook-form"
 import { Input } from "app/components/Input"
 import { AuthContext } from "./AuthLayout"
+import { useMutation } from "blitz"
 
 type SignUpFormProps = {
   onSuccess?: () => void
@@ -38,6 +39,7 @@ const UpdateStore: React.FC<{ control: Control<SignupFormData> }> = ({ control }
 
 export const SignupForm = (props: SignUpFormProps) => {
   const { state } = useContext(AuthContext)
+  const [signupMutation] = useMutation(signup)
 
   const [otherError, setOtherError] = useState("")
   const [emailExists, setEmailExists] = useState<boolean>(false)
@@ -49,7 +51,7 @@ export const SignupForm = (props: SignUpFormProps) => {
     setEmailExists(false)
 
     try {
-      await signup({ ...values })
+      await signupMutation({ ...values })
       props.onSuccess && props.onSuccess()
     } catch (error) {
       if (error.code === "P2002" && error.meta?.target?.includes("email")) {

@@ -1,5 +1,5 @@
 import db, { CalendarDeleteArgs } from "db"
-import { Ctx } from "@blitzjs/core"
+import { Ctx } from "blitz"
 
 type DeleteCalendarInput = {
   where: CalendarDeleteArgs["where"]

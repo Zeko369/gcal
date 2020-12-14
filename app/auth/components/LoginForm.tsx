@@ -5,6 +5,7 @@ import { Button, Heading, Stack } from "@chakra-ui/react"
 import { Control, useForm, useWatch } from "react-hook-form"
 import { Input } from "app/components/Input"
 import { AuthContext } from "./AuthLayout"
+import { useMutation } from "blitz"
 
 type LoginFormProps = {
   onSuccess?: () => void
@@ -32,16 +33,17 @@ const UpdateStore: React.FC<{ control: Control<LoginFormData> }> = ({ control })
 }
 
 export const LoginForm = (props: LoginFormProps) => {
-  const [otherError, setOtherError] = useState("")
   const { state } = useContext(AuthContext)
+  const [loginMutation] = useMutation(login)
 
+  const [otherError, setOtherError] = useState("")
   const { handleSubmit, register, setError, errors, formState, control } = useForm<LoginFormData>({
     defaultValues: { ...state },
   })
 
   const onSubmit = async (values: LoginFormData) => {
     try {
-      await login({ email: values.email, password: values.password })
+      await loginMutation({ email: values.email, password: values.password })
       props.onSuccess && props.onSuccess()
     } catch (error) {
       if (error.name === "AuthenticationError") {

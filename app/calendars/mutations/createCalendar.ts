@@ -1,5 +1,5 @@
 import db, { CalendarCreateArgs } from "db"
-import { Ctx } from "@blitzjs/core"
+import { Ctx } from "blitz"
 
 type CreateCalendarInput = {
   data: Omit<CalendarCreateArgs["data"], "user">

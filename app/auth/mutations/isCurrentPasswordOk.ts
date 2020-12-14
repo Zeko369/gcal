@@ -1,11 +1,10 @@
 import { hashPassword, verifyPassword } from "app/auth/auth-utils"
-import { Ctx } from "app/ts"
-import { AuthenticationError } from "blitz"
+import { AuthenticationError, Ctx } from "blitz"
 import db from "db"
 import SecurePassword from "secure-password"
 
-const isCurrentPasswordOk = async (password: string, ctx: Ctx = {}) => {
-  ctx.session!.authorize()
+const isCurrentPasswordOk = async (password: string, ctx: Ctx) => {
+  ctx.session.authorize()
 
   const user = await db.user.findOne({ where: { id: ctx.session!.userId } })
   if (!user || !user.hashedPassword) throw new AuthenticationError()

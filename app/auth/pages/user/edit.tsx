@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useState } from "react"
-import { BlitzPage, useRouter } from "blitz"
+import { BlitzPage, useMutation, useRouter } from "blitz"
 import { useForm } from "react-hook-form"
 import { User } from "@prisma/client"
 import { Spinner, Divider, Heading, VStack, Button, Flex, Stack, Box } from "@chakra-ui/react"
@@ -27,8 +27,10 @@ const UserForm: React.FC<UserFormProps> = ({ user, refetch }) => {
     defaultValues: { name: user.name },
   })
 
+  const [updateUserMutation] = useMutation(updateUser)
+
   const onSubmit = async (data: UserFormData) => {
-    await updateUser({ data: { name: { set: data.name } } })
+    await updateUserMutation({ data: { name: { set: data.name } } })
     refetch()
   }
 
@@ -69,9 +71,11 @@ const PasswordForm: React.FC = () => {
   const current_password_raw = watch("current_password", "")
   const current_password = useDebounce(current_password_raw, 1000)
 
+  const [isCurrentPasswordOkMutation] = useMutation(isCurrentPasswordOk)
+
   useEffect(() => {
     if (current_password.length > 0) {
-      isCurrentPasswordOk(current_password).then((ok) => {
+      isCurrentPasswordOkMutation(current_password).then((ok) => {
         if (ok) {
           clearErrors("current_password")
         } else {
@@ -80,6 +84,8 @@ const PasswordForm: React.FC = () => {
       })
     }
   }, [current_password, setError, clearErrors])
+
+  const [changePasswordMutation] = useMutation(changePassword)
 
   const onSubmit = async (data: UserPasswordData) => {
     const { current_password, password, confirm_password } = data
@@ -93,7 +99,7 @@ const PasswordForm: React.FC = () => {
     }
 
     try {
-      await changePassword({ current_password, password })
+      await changePasswordMutation({ current_password, password })
       router.push("/user")
     } catch (err) {
       if (err.message === "old_no_match") {

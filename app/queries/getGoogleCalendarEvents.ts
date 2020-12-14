@@ -1,5 +1,5 @@
 import { google } from "googleapis"
-import { SessionContext } from "blitz"
+import { Ctx } from "blitz"
 import { startOfMonth, endOfMonth } from "date-fns"
 import db from "db"
 import { getClient } from "app/lib/gcal"
@@ -10,10 +10,7 @@ interface GetEventsInput {
   timeMax?: Date
 }
 
-const getGoogleCalendarEvents = async (
-  input: GetEventsInput,
-  ctx: { session?: SessionContext } = {}
-) => {
+const getGoogleCalendarEvents = async (input: GetEventsInput, ctx: Ctx) => {
   const userId = ctx.session?.userId as number
 
   const user = await db.user.findOne({ where: { id: userId } })

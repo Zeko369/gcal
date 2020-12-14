@@ -1,5 +1,5 @@
 import db, { FindManyCalendarArgs } from "db"
-import { Ctx } from "@blitzjs/core"
+import { Ctx } from "blitz"
 
 type GetCalendarsInput = {
   where?: FindManyCalendarArgs["where"]
