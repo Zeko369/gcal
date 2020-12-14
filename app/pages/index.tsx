@@ -184,12 +184,17 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal }) => {
       key={calendar.id}
     >
       <Flex justify="space-between" w="100%">
-        <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
-          <Heading size="lg" color="black">
-            {calendar.name}
-          </Heading>
-        </Link>
-        <HStack ml="2">
+        <VStack align="left">
+          <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
+            <Heading size="lg" color="black">
+              {calendar.name}
+            </Heading>
+          </Link>
+          <Suspense fallback={<Spinner />}>
+            <CalendarEvents calendar={calendar} ref={ref} />
+          </Suspense>
+        </VStack>
+        <VStack ml="2">
           <LinkIconButton
             size="xs"
             icon={<EditIcon />}
@@ -203,12 +208,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal }) => {
             onClick={onView}
           />
           <IconButton size="xs" icon={<RepeatIcon />} aria-label="refresh" onClick={refetch} />
-        </HStack>
+        </VStack>
       </Flex>
-
-      <Suspense fallback={<Spinner />}>
-        <CalendarEvents calendar={calendar} ref={ref} />
-      </Suspense>
     </VStack>
   )
 }
@@ -289,11 +290,11 @@ const HomePage: React.FC = () => {
         <Heading size="md" mb="2">
           {date}
         </Heading>
-        <Button colorScheme="green" onClick={() => dispatch({ type: "reset" })}>
+        <Button colorScheme="green" onClick={() => dispatch({ type: "reset" })} size="sm">
           Reset
         </Button>
       </Flex>
-      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3} mt="4">
+      <SimpleGrid columns={{ base: 1, md: 4 }} spacing={3} mt="4">
         {calendars.map((calendar) => (
           <CalendarCard calendar={calendar} key={calendar.id} openModal={modal?.onOpen} />
         ))}
@@ -343,7 +344,7 @@ const Home: BlitzPage<HomeProps> = ({ date }) => {
   )
 }
 
-const handleCookie = <T extends Date | String | Scale>(
+const handleCookie = <T extends String | Scale>(
   cookies: Record<string, string>,
   ctx: GetServerSidePropsContext<ParsedUrlQuery>,
   key: string,
@@ -358,13 +359,17 @@ const handleCookie = <T extends Date | String | Scale>(
     const val = handle(cookies[key])
     setCookie(ctx, key, val.toString(), cookieOptions)
 
-    return val
+    // @ts-ignore
+    return val.toString()
   } catch (err) {
     if (!(err instanceof Error && err.message === "noCookie")) {
       console.error(err)
     }
 
     setCookie(ctx, key, defaultValue, cookieOptions)
+
+    // @ts-ignore
+    return defaultValue
   }
 }
 
