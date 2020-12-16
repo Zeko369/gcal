@@ -14,7 +14,6 @@ import {
   forwardRef,
   Grid,
   Heading,
-  HStack,
   IconButton,
   Select,
   SimpleGrid,
@@ -34,7 +33,6 @@ import {
   List,
   ListItem,
   ListIcon,
-  ColorMode,
   useColorModeValue,
 } from "@chakra-ui/react"
 import { endOfWeek } from "date-fns"

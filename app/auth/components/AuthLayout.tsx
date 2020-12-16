@@ -39,8 +39,6 @@ export const AuthLayout: React.FC = ({ children }) => {
   const bg = useColorModeValue("blue.300", "gray.700")
   const bgCard = useColorModeValue("white", "black")
 
-  console.log(state)
-
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
       <Box h="100vh" w="100wv" bg={bg}>

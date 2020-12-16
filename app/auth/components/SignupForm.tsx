@@ -69,8 +69,6 @@ export const SignupForm = (props: SignUpFormProps) => {
     }
   }
 
-  console.log("render")
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <UpdateStore control={control} />
