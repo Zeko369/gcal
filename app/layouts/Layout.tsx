@@ -33,7 +33,9 @@ const Nav: React.FC = () => {
   return (
     <Flex p="2" bg="#1a73e8" justify="space-between" alignItems="center">
       <Heading color="white">
-        <Link href="/">Gcal</Link>
+        <Link href="/" noUnderline>
+          Gcal
+        </Link>
       </Heading>
 
       <Flex justifyContent="flex-end">
