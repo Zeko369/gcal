@@ -1,46 +1,22 @@
-import React, {
-  Suspense,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useReducer,
-  useRef,
-} from "react"
+import React, { Suspense, useCallback, useMemo, useReducer } from "react"
 import { BlitzPage, GetServerSideProps, useQuery } from "blitz"
 import {
   Box,
   Button,
   Flex,
-  forwardRef,
   Grid,
   Heading,
   IconButton,
   Select,
   SimpleGrid,
   Spinner,
-  Text,
   useBreakpointValue,
-  VStack,
   useDisclosure,
-  UseDisclosureReturn,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalOverlay,
-  ModalHeader,
-  ModalContent,
-  ModalFooter,
-  List,
-  ListItem,
-  ListIcon,
-  useColorModeValue,
 } from "@chakra-ui/react"
 import { endOfWeek } from "date-fns"
-import { Calendar } from "@prisma/client"
-import { Link, LinkIconButton } from "chakra-next-link"
 import { ParsedUrlQuery } from "querystring"
 import { GetServerSidePropsContext } from "next"
-import { ArrowLeftIcon, ArrowRightIcon, EditIcon, RepeatIcon, ViewIcon } from "@chakra-ui/icons"
+import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
 import { parseCookies, setCookie } from "nookies"
 
 import {
@@ -56,161 +32,9 @@ import {
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
 import getCalendarsDB from "app/calendars/queries/getCalendars"
-import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
-import { timeMax, timeMin } from "app/lib/time"
-import { RestGoogleToken } from "app/components/RestGoogleToken"
 import { cookieOptions } from "app/lib/cookie"
-
-const format = (n: number) => Math.round(n * 100) / 100
-
-interface EventModalProps {
-  modal: UseDisclosureReturn
-}
-
-const CheckIcon: React.FC<{ value: boolean }> = ({ value }) => {
-  return <i className="material-icons">{`check_box${value ? "_outline_blank" : ""}`}</i>
-}
-
-const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
-  const { state } = useStore()
-
-  return (
-    <Modal isOpen={modal.isOpen} onClose={modal.onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        {state.calendar ? (
-          <>
-            <ModalHeader>{state.calendar.name}</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <List spacing={2}>
-                {state.events.map((event) => (
-                  <ListItem d="flex" key={event.id}>
-                    <ListIcon as={() => <CheckIcon value={event.planned} />} color="green.500" />
-                    {`${new Date(event.start).toDateString()} => [${event.time / 60}h]`}
-                    <br />
-                    {event.summary}
-                  </ListItem>
-                ))}
-              </List>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={modal.onClose}>
-                Close
-              </Button>
-            </ModalFooter>
-          </>
-        ) : (
-          <ModalHeader>Error </ModalHeader>
-        )}
-      </ModalContent>
-    </Modal>
-  )
-}
-
-type CalendarEventsProps = { calendar: Calendar }
-const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
-  const { state, dispatch } = useStore()
-
-  const args = {
-    calendarId: calendar.uuid,
-    timeMin: timeMin(state.date),
-    timeMax: timeMax(state.date),
-  }
-
-  const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, args)
-
-  useImperativeHandle(ref, () => ({
-    refetch,
-    setEvents: () => dispatch({ type: "setEvents", payload: { calendar, events: data.formatted } }),
-  }))
-
-  if (!data) {
-    return (
-      <>
-        <Heading size="sm">Token probably wrong</Heading>
-        <RestGoogleToken />
-      </>
-    )
-  }
-
-  return (
-    <VStack align="flex-start" spacing="1">
-      <Heading fontSize="lg" color="black">
-        Hours:{" "}
-        <strong>
-          {format(data.soFar / 60)}h [{format(data.all / 60)}]
-        </strong>
-      </Heading>
-      <Text color="black">Count: {data.formatted.length}</Text>
-    </VStack>
-  )
-})
-
-interface CalendarCardProps {
-  calendar: Calendar
-  openModal?: () => void
-}
-
-const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal }) => {
-  const ref = useRef(null)
-
-  const refetch = async () => {
-    if (ref.current) {
-      await (ref.current as any).refetch()
-    }
-  }
-
-  const onView = () => {
-    if (ref.current) {
-      ;(ref.current as any).setEvents()
-      openModal?.()
-    }
-  }
-
-  const bg = useColorModeValue("gray.100", "gray.700")
-
-  return (
-    <VStack
-      p="4"
-      pt="2"
-      shadow="md"
-      borderRadius="md"
-      align="flex-start"
-      bg={calendar.color ? `${calendar.color}.300` : bg}
-      key={calendar.id}
-    >
-      <Flex justify="space-between" w="100%">
-        <VStack align="left">
-          <Link href="/calendars/[id]" nextAs={`/calendars/${calendar.id}`}>
-            <Heading size="lg" color="black">
-              {calendar.name}
-            </Heading>
-          </Link>
-          <Suspense fallback={<Spinner />}>
-            <CalendarEvents calendar={calendar} ref={ref} />
-          </Suspense>
-        </VStack>
-        <VStack ml="2">
-          <LinkIconButton
-            size="xs"
-            icon={<EditIcon />}
-            aria-label="edit"
-            href={`/calendars/${calendar.id}/edit`}
-          />
-          <IconButton
-            size="xs"
-            icon={<ViewIcon />}
-            aria-label="toggle show events"
-            onClick={onView}
-          />
-          <IconButton size="xs" icon={<RepeatIcon />} aria-label="refresh" onClick={refetch} />
-        </VStack>
-      </Flex>
-    </VStack>
-  )
-}
+import { EventsModal } from "app/components/EventsModal"
+import { CalendarCard } from "app/components/CalendarCard"
 
 const dFormat = (date: Date, scale: Scale) => {
   switch (scale) {
