@@ -1,11 +1,14 @@
 import React, { Suspense } from "react"
-import Layout from "app/layouts/Layout"
 import { Head, useRouter, useQuery, useParam, BlitzPage, useMutation } from "blitz"
+import { Heading, IconButton } from "@chakra-ui/react"
 import { Link } from "chakra-next-link"
+
+import Layout from "app/layouts/Layout"
+import { CalendarForm, CalendarFormData } from "app/calendars/components/CalendarForm"
 import getCalendar from "app/calendars/queries/getCalendar"
 import updateCalendarFn from "app/calendars/mutations/updateCalendar"
-import { CalendarForm, CalendarFormData } from "app/calendars/components/CalendarForm"
-import { Heading } from "@chakra-ui/react"
+import deleteCalendarFn from "app/calendars/mutations/deleteCalendar"
+import { DeleteIcon } from "@chakra-ui/icons"
 
 export const EditCalendar = () => {
   const router = useRouter()
@@ -13,6 +16,7 @@ export const EditCalendar = () => {
   const [calendar, { mutate }] = useQuery(getCalendar, { where: { id: calendarId } })
 
   const [updateCalendar] = useMutation(updateCalendarFn)
+  const [deleteCalendar] = useMutation(deleteCalendarFn)
 
   const onSubmit = async (data: CalendarFormData) => {
     try {
@@ -27,6 +31,19 @@ export const EditCalendar = () => {
   return (
     <>
       <Heading>Edit Calendar {calendar.id}</Heading>
+      <IconButton
+        colorScheme="red"
+        aria-label="delete"
+        icon={<DeleteIcon />}
+        onClick={async () => {
+          if (window.confirm("This will be deleted")) {
+            await deleteCalendar({ where: { id: calendar.id } })
+            await router.push("/")
+          }
+        }}
+      >
+        Delete
+      </IconButton>
       <CalendarForm initialValues={calendar} onSubmit={onSubmit} update />
     </>
   )

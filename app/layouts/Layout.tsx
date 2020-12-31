@@ -1,6 +1,6 @@
 import React, { ReactNode, Suspense } from "react"
-import { Head, useMutation, useSession } from "blitz"
-import { HStack, Flex, Box, Heading, Avatar, Button, Spinner, Grid } from "@chakra-ui/react"
+import { Head, useMutation } from "blitz"
+import { HStack, Flex, Box, Heading, Avatar, Button, Spinner } from "@chakra-ui/react"
 import { Link, LinkButton } from "chakra-next-link"
 import NextLink from "next/link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
@@ -29,37 +29,19 @@ const User: React.FC = () => {
   )
 }
 
-const Links: React.FC = () => {
-  const { isLoading, userId } = useSession()
-
-  return !isLoading && userId ? (
-    <HStack justify="center">
-      <Link href="/calendars" color="white" _activeLink={{ fontWeight: "bold" }}>
-        Calendars
-      </Link>
-    </HStack>
-  ) : (
-    <Box />
-  )
-}
-
 const Nav: React.FC = () => {
   return (
-    <Grid p="2" bg="#1a73e8" templateColumns="repeat(3, 1fr)" gap={6} alignItems="center">
+    <Flex p="2" bg="#1a73e8" justify="space-between" alignItems="center">
       <Heading color="white">
         <Link href="/">Gcal</Link>
       </Heading>
-
-      <Suspense fallback={() => null}>
-        <Links />
-      </Suspense>
 
       <Flex justifyContent="flex-end">
         <Suspense fallback={<Spinner />}>
           <User />
         </Suspense>
       </Flex>
-    </Grid>
+    </Flex>
   )
 }
 
@@ -74,7 +56,7 @@ const Layout = ({ title, children }: LayoutProps) => {
       {/* Main */}
       <Box as="main" height="calc(100vh - 56px)">
         <Nav />
-        <Box w="1000px" maxW="90%" m="0 auto" my="4" pb="10">
+        <Box w="90%" maxW="100%" m="0 auto" my="4" pb="10">
           {children}
         </Box>
       </Box>

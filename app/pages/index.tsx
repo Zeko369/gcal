@@ -97,7 +97,7 @@ const HomePage: React.FC = () => {
 
   return (
     <Box>
-      <Grid templateColumns="1fr 2fr 1fr" gap={3}>
+      <Grid templateColumns={"1fr 2fr 1fr"} gap={3}>
         <NavigationButton label="Previous" Icon={<ArrowLeftIcon />} action="val--" />
         <Select mb="3" onChange={onChange} value={state.date.scale}>
           {intervals.map(({ key, label }) => (
@@ -116,7 +116,7 @@ const HomePage: React.FC = () => {
           Reset
         </Button>
       </Flex>
-      <SimpleGrid columns={{ base: 1, md: 4 }} spacing={3} mt="4">
+      <SimpleGrid columns={[1, 3, 3, 4]} spacing={3} mt="4">
         {calendars.map((calendar) => (
           <CalendarCard calendar={calendar} key={calendar.id} openModal={modal?.onOpen} />
         ))}

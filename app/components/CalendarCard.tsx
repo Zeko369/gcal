@@ -1,14 +1,15 @@
 import React, { forwardRef, Suspense, useImperativeHandle, useRef } from "react"
-import { useQuery, Link } from "blitz"
+import { useQuery } from "blitz"
 import { LinkIconButton } from "chakra-next-link"
 import {
   Heading,
   VStack,
   useColorModeValue,
-  Flex,
   Spinner,
   IconButton,
   Text,
+  DarkMode,
+  LightMode,
 } from "@chakra-ui/react"
 import { EditIcon, ViewIcon, RepeatIcon } from "@chakra-ui/icons"
 import { Calendar } from "@prisma/client"
@@ -63,6 +64,12 @@ interface CalendarCardProps {
   openModal?: () => void
 }
 
+const buttonProps = {
+  variant: "outline",
+  colorScheme: "white",
+  size: "xs",
+}
+
 export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal }) => {
   const ref = useRef(null)
 
@@ -93,29 +100,27 @@ export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal 
       key={calendar.id}
     >
       <VStack align="left">
-        <Link href={`/calendars/${calendar.id}`}>
-          <Heading size="lg" color="black">
-            {calendar.name}
-          </Heading>
-        </Link>
-        <Suspense fallback={<Spinner />}>
+        <Heading size="lg" color="black">
+          {calendar.name}
+        </Heading>
+        <Suspense fallback={<Spinner size="lg" />}>
           <CalendarEvents calendar={calendar} ref={ref} />
         </Suspense>
       </VStack>
       <VStack ml="2" pos="absolute" top="0" right="2" bottom="0">
         <LinkIconButton
-          size="xs"
+          {...buttonProps}
           icon={<EditIcon />}
           aria-label="edit"
           href={`/calendars/${calendar.id}/edit`}
         />
         <IconButton
-          size="xs"
+          {...buttonProps}
           icon={<ViewIcon />}
           aria-label="toggle show events"
           onClick={onView}
         />
-        <IconButton size="xs" icon={<RepeatIcon />} aria-label="refresh" onClick={refetch} />
+        <IconButton {...buttonProps} icon={<RepeatIcon />} aria-label="refresh" onClick={refetch} />
       </VStack>
     </VStack>
   )
