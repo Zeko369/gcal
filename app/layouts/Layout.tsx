@@ -58,7 +58,7 @@ const Layout = ({ title, children }: LayoutProps) => {
       {/* Main */}
       <Box as="main" height="calc(100vh - 56px)">
         <Nav />
-        <Box w="90%" maxW="100%" m="0 auto" my="4" pb="10">
+        <Box w="90%" maxW="1000px" m="0 auto" my="4" pb="10">
           {children}
         </Box>
       </Box>
