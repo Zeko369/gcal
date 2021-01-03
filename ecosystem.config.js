@@ -19,11 +19,11 @@ module.exports = {
 
   deploy: {
     production: {
-      user: "zeko",
+      user: "dev",
       host: process.env.SERVER_URL,
       ref: "origin/master",
       repo: "git@github.com:Zeko369/gcal.git",
-      path: "/home/zeko/deploy-gcal",
+      path: "/home/dev/deploy-gcal",
       "post-deploy": "./scripts/postDeploy.sh",
     },
   },

@@ -113,7 +113,7 @@ const HomePage: React.FC = () => {
           {date}
         </Heading>
         <Button colorScheme="green" onClick={() => dispatch({ type: "reset" })} size="sm">
-          Reset
+          Now
         </Button>
       </Flex>
       <SimpleGrid columns={[1, 3, 3, 4]} spacing={3} mt="4">
