@@ -22,7 +22,7 @@ export const EditCalendar = () => {
     try {
       const updated = await updateCalendar({ where: { id: calendar.id }, data })
       await mutate(updated)
-      await router.push("/calendars/[calendarId]", `/calendars/${updated.id}`)
+      await router.push("/")
     } catch (error) {
       console.error(error)
     }
