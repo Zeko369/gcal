@@ -111,7 +111,14 @@ const UserDetails: React.FC = () => {
           </>
         )}
       </Section>
-      <Section title="Calendars">
+      <Section
+        title="Calendars"
+        right={
+          <LinkButton href="/calendars/new" colorScheme="green">
+            Add more
+          </LinkButton>
+        }
+      >
         <Text>Count: {user.calendars.length}</Text>
       </Section>
       <Section title={`Theme: ${colorMode}`}>
