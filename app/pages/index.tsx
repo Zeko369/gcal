@@ -108,8 +108,8 @@ const HomePage: React.FC = () => {
         </Select>
         <NavigationButton label="Next" Icon={<ArrowRightIcon />} action="val++" />
       </Grid>
-      <Flex justify="space-between" align="center">
-        <Heading size="md" mb="2">
+      <Flex justify={["flex-end", "space-between"]} align="center" flexWrap="wrap">
+        <Heading size="md" mb="2" maxW="100%" wordBreak="break-word">
           {date}
         </Heading>
         <Button colorScheme="green" onClick={() => dispatch({ type: "reset" })} size="sm">
