@@ -8,6 +8,7 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 cp ~/envs/gcal .env.local
 
 yarn
+yarn migrate
 yarn build
 
 git checkout yarn.lock
