@@ -64,7 +64,7 @@ const Layout = ({ title, children }: LayoutProps) => {
       </Box>
 
       {/* Footer */}
-      <Box as="footer" bg="#000" color="white" py="4" textAlign="center">
+      <Box as="footer" bg="#000" color="gray.500" py="4" textAlign="center">
         Gcal app copyright Fran Zekan
       </Box>
     </>
