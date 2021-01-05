@@ -6,11 +6,9 @@ import {
   Flex,
   Grid,
   Heading,
-  IconButton,
   Select,
   SimpleGrid,
   Spinner,
-  useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react"
 import { endOfWeek } from "date-fns"
@@ -35,6 +33,7 @@ import getCalendarsDB from "app/calendars/queries/getCalendars"
 import { cookieOptions } from "app/lib/cookie"
 import { EventsModal } from "app/components/EventsModal"
 import { CalendarCard } from "app/components/CalendarCard"
+import { NavigationButton } from "app/components/NavigationButton"
 
 const dFormat = (date: Date, scale: Scale) => {
   switch (scale) {
@@ -53,30 +52,6 @@ const dFormat = (date: Date, scale: Scale) => {
     case "year":
       return `Year: ${date.getFullYear()}`
   }
-}
-
-interface NavigationButtonProps {
-  label: string
-  Icon: React.ReactElement
-  action: "val++" | "val--"
-}
-
-const NavigationButton: React.FC<NavigationButtonProps> = ({ label, Icon, action }) => {
-  const { dispatch } = useStore()
-  const icon = useBreakpointValue({ base: 1, md: 0 })
-
-  return icon ? (
-    <IconButton
-      colorScheme="blue"
-      onClick={() => dispatch({ type: action })}
-      icon={Icon}
-      aria-label={label}
-    />
-  ) : (
-    <Button colorScheme="blue" onClick={() => dispatch({ type: action })} leftIcon={Icon}>
-      {label}
-    </Button>
-  )
 }
 
 const HomePage: React.FC = () => {
