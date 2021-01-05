@@ -1,7 +1,6 @@
 import React, { Suspense } from "react"
 import { Head, useRouter, useQuery, useParam, BlitzPage, useMutation } from "blitz"
-import { Heading, IconButton } from "@chakra-ui/react"
-import { Link } from "chakra-next-link"
+import { Flex, Heading, IconButton, VStack } from "@chakra-ui/react"
 
 import Layout from "app/layouts/Layout"
 import { CalendarForm, CalendarFormData } from "app/calendars/components/CalendarForm"
@@ -29,23 +28,25 @@ export const EditCalendar = () => {
   }
 
   return (
-    <>
-      <Heading>Edit Calendar {calendar.id}</Heading>
-      <IconButton
-        colorScheme="red"
-        aria-label="delete"
-        icon={<DeleteIcon />}
-        onClick={async () => {
-          if (window.confirm("This will be deleted")) {
-            await deleteCalendar({ where: { id: calendar.id } })
-            await router.push("/")
-          }
-        }}
-      >
-        Delete
-      </IconButton>
+    <VStack w="100%" align="flex-start">
+      <Flex w="100%" justify="space-between">
+        <Heading>Edit Calendar {calendar.id}</Heading>
+        <IconButton
+          colorScheme="red"
+          aria-label="delete"
+          icon={<DeleteIcon />}
+          onClick={async () => {
+            if (window.confirm("This will be deleted")) {
+              await deleteCalendar({ where: { id: calendar.id } })
+              await router.push("/")
+            }
+          }}
+        >
+          Delete
+        </IconButton>
+      </Flex>
       <CalendarForm initialValues={calendar} onSubmit={onSubmit} update />
-    </>
+    </VStack>
   )
 }
 
@@ -60,10 +61,6 @@ const EditCalendarPage: BlitzPage = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <EditCalendar />
         </Suspense>
-
-        <p>
-          <Link href="/calendars">Calendars</Link>
-        </p>
       </main>
     </div>
   )

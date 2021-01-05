@@ -1,7 +1,7 @@
-import { Button, FormControl, FormLabel, Select, Stack, useTheme } from "@chakra-ui/react"
-import { Input } from "app/components/Input"
 import React from "react"
 import { useForm } from "react-hook-form"
+import { Button, FormControl, FormLabel, Select, VStack, useTheme } from "@chakra-ui/react"
+import { Input } from "app/components/Input"
 
 export interface CalendarFormData {
   name: string
@@ -30,35 +30,33 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
   const color = watch("color")
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack>
-        <Input name="name" ref={register({ required: true })} isRequired />
-        <FormControl isRequired>
-          <FormLabel htmlFor="color">Color</FormLabel>
-          <Select ref={register({ required: true })} isRequired name="color" bg={`${color}.300`}>
-            {colors.map((color) => (
-              <option value={color}>{color}</option>
-            ))}
-          </Select>
-        </FormControl>
-        {update && (
-          <Input
-            name="order"
-            ref={register({ required: true, valueAsNumber: true })}
-            isRequired
-            type="number"
-          />
-        )}
-        {children}
-        <Button
-          colorScheme="green"
-          type="submit"
-          isDisabled={disabled}
-          isLoading={formState.isSubmitting}
-        >
-          {update ? "Update" : "Create"}
-        </Button>
-      </Stack>
-    </form>
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="flex-start">
+      <Input name="name" ref={register({ required: true })} isRequired />
+      <FormControl isRequired>
+        <FormLabel htmlFor="color">Color</FormLabel>
+        <Select ref={register({ required: true })} isRequired name="color" bg={`${color}.300`}>
+          {colors.map((color) => (
+            <option value={color}>{color}</option>
+          ))}
+        </Select>
+      </FormControl>
+      {update && (
+        <Input
+          name="order"
+          ref={register({ required: true, valueAsNumber: true })}
+          isRequired
+          type="number"
+        />
+      )}
+      {children}
+      <Button
+        colorScheme="green"
+        type="submit"
+        isDisabled={disabled}
+        isLoading={formState.isSubmitting}
+      >
+        {update ? "Update" : "Create"}
+      </Button>
+    </VStack>
   )
 }
