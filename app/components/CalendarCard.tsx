@@ -1,16 +1,7 @@
-import React, { forwardRef, Suspense, useImperativeHandle, useRef } from "react"
+import React, { forwardRef, Suspense, useCallback, useImperativeHandle, useRef } from "react"
 import { useQuery } from "blitz"
 import { LinkIconButton } from "chakra-next-link"
-import {
-  Heading,
-  VStack,
-  useColorModeValue,
-  Spinner,
-  IconButton,
-  Text,
-  DarkMode,
-  LightMode,
-} from "@chakra-ui/react"
+import { Heading, VStack, useColorModeValue, Spinner, IconButton, Text } from "@chakra-ui/react"
 import { EditIcon, ViewIcon, RepeatIcon } from "@chakra-ui/icons"
 import { Calendar } from "@prisma/client"
 
@@ -20,6 +11,20 @@ import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
 import { RestGoogleToken } from "./RestGoogleToken"
 
 const format = (n: number) => Math.round(n * 100) / 100
+const formatTime = (curr: number, all: number): string => {
+  return `${format(curr / 59)}h [${format(all / 60)}]`
+}
+const formatPriceFn = (calendar: Calendar) => (curr: number, all: number): string => {
+  const pph = calendar.pricePerHour
+  const currencyBefore = calendar.currencyBefore ? calendar.currency || "Na" : ""
+  const currencyAfter = calendar.currencyBefore ? "" : calendar.currency || "Na"
+
+  return pph
+    ? `${currencyBefore}${(curr / 60) * pph}${currencyAfter} [${currencyBefore}${
+        (all / 60) * pph
+      }${currencyAfter}]`
+    : "No pph"
+}
 
 type CalendarEventsProps = { calendar: Calendar }
 const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
@@ -32,6 +37,7 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
   }
 
   const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, args)
+  const formatPrice = useCallback(formatPriceFn(calendar), [calendar])
 
   useImperativeHandle(ref, () => ({
     refetch,
@@ -50,9 +56,11 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
   return (
     <VStack align="flex-start" spacing="1">
       <Heading fontSize="lg" color="black">
-        <strong>
-          {format(data.soFar / 60)}h [{format(data.all / 60)}]
-        </strong>
+        {state.showPrice ? (
+          <strong>{formatPrice(data.soFar, data.all)}</strong>
+        ) : (
+          <strong>{formatTime(data.soFar, data.all)}</strong>
+        )}
       </Heading>
       <Text color="black">Count: {data.formatted.length}</Text>
     </VStack>

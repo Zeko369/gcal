@@ -1,12 +1,13 @@
 import React from "react"
 import { useForm } from "react-hook-form"
-import { Button, FormControl, FormLabel, Select, VStack, useTheme } from "@chakra-ui/react"
+import { Button, FormControl, FormLabel, Select, VStack, useTheme, Switch } from "@chakra-ui/react"
 import { Input } from "app/components/Input"
 
 export interface CalendarFormData {
   name: string
   pricePerHour?: number | null
   currency?: string | null
+  currencyBefore?: boolean | null
   order?: number
   color?: string | null
 }
@@ -49,6 +50,10 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
         type="number"
       />
       <Input name="currency" ref={register()} type="text" />
+      <FormControl>
+        <FormLabel mb="0">Currency before value</FormLabel>
+        <Switch name="currencyBefore" ref={register()} type="text" />
+      </FormControl>
       {update && (
         <Input
           name="order"
