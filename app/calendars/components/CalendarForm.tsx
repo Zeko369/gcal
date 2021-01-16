@@ -7,7 +7,7 @@ export interface CalendarFormData {
   name: string
   pricePerHour?: number | null
   currency?: string | null
-  currencyBefore?: boolean | null
+  currencyBefore: boolean
   order?: number
   color?: string | null
 }
