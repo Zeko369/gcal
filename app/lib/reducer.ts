@@ -14,11 +14,13 @@ export type Action =
   | { type: "reset" }
   | { type: "val++" }
   | { type: "val--" }
+  | { type: "toggleArchived" }
   | { type: "togglePrice" }
   | { type: "setEvents"; payload: { events: any[]; calendar: Calendar } }
 
 interface State {
   showPrice: boolean
+  showArchived: boolean
   date: {
     scale: Scale
     value: Date
@@ -38,6 +40,7 @@ export type Store = { state: State; dispatch: React.Dispatch<Action> }
 
 export const initialState: State = {
   showPrice: false,
+  showArchived: false,
   date: {
     scale: "week",
     value: startOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -67,6 +70,8 @@ const reducerHelper = (state: State, action: Action): State => {
   const { date } = state
 
   switch (action.type) {
+    case "toggleArchived":
+      return { ...state, showArchived: !state.showArchived }
     case "togglePrice":
       return { ...state, showPrice: !state.showPrice }
     case "setValueScale":

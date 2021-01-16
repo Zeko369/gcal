@@ -1,13 +1,14 @@
 import React, { Suspense } from "react"
 import { Head, useRouter, useQuery, useParam, BlitzPage, useMutation } from "blitz"
-import { Flex, Heading, IconButton, VStack } from "@chakra-ui/react"
+import { Flex, Heading, HStack, IconButton, VStack } from "@chakra-ui/react"
 
 import Layout from "app/layouts/Layout"
 import { CalendarForm, CalendarFormData } from "app/calendars/components/CalendarForm"
 import getCalendar from "app/calendars/queries/getCalendar"
 import updateCalendarFn from "app/calendars/mutations/updateCalendar"
 import deleteCalendarFn from "app/calendars/mutations/deleteCalendar"
-import { DeleteIcon } from "@chakra-ui/icons"
+import archiveCalendarFn from "app/calendars/mutations/archiveCalendar"
+import { DeleteIcon, EmailIcon, RepeatClockIcon } from "@chakra-ui/icons"
 
 export const EditCalendar = () => {
   const router = useRouter()
@@ -16,6 +17,7 @@ export const EditCalendar = () => {
 
   const [updateCalendar] = useMutation(updateCalendarFn)
   const [deleteCalendar] = useMutation(deleteCalendarFn)
+  const [archiveCalendar] = useMutation(archiveCalendarFn)
 
   const onSubmit = async (data: CalendarFormData) => {
     try {
@@ -28,8 +30,15 @@ export const EditCalendar = () => {
   }
 
   const onDelete = async () => {
-    if (window.confirm("This will be deleted")) {
+    if (window.confirm("This calendar be deleted")) {
       await deleteCalendar({ where: { id: calendar.id } })
+      await router.push("/")
+    }
+  }
+
+  const onArchive = async () => {
+    if (window.confirm(`This calendar will be ${calendar.archivedAt ? "un" : ""}archived`)) {
+      await archiveCalendar({ where: { id: calendar.id } })
       await router.push("/")
     }
   }
@@ -38,9 +47,24 @@ export const EditCalendar = () => {
     <VStack w="100%" align="flex-start">
       <Flex w="100%" justify="space-between">
         <Heading>Edit Calendar {calendar.id}</Heading>
-        <IconButton colorScheme="red" aria-label="delete" icon={<DeleteIcon />} onClick={onDelete}>
-          Delete
-        </IconButton>
+        <HStack>
+          <IconButton
+            colorScheme="red"
+            aria-label="delete"
+            icon={<DeleteIcon />}
+            onClick={onDelete}
+          >
+            Delete
+          </IconButton>
+          <IconButton
+            colorScheme="orange"
+            aria-label="archive"
+            icon={calendar.archivedAt ? <RepeatClockIcon /> : <EmailIcon />}
+            onClick={onArchive}
+          >
+            {calendar.archivedAt ? "UNArchive" : "Archive"}
+          </IconButton>
+        </HStack>
       </Flex>
       <CalendarForm initialValues={calendar} onSubmit={onSubmit} update />
     </VStack>

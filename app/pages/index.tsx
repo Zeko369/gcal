@@ -56,8 +56,10 @@ const dFormat = (date: Date, scale: Scale) => {
 }
 
 const HomePage: React.FC = () => {
-  const [{ calendars }] = useQuery(getCalendarsDB, {})
   const { dispatch, state, modal } = useStore()
+  const [{ calendars }] = useQuery(getCalendarsDB, {
+    where: { ...(!state.showArchived && { archivedAt: null }) },
+  })
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -89,8 +91,21 @@ const HomePage: React.FC = () => {
           {date}
         </Heading>
         <HStack>
-          <Button colorScheme="blue" onClick={() => dispatch({ type: "togglePrice" })} size="sm">
-            Toggle price
+          <Button
+            colorScheme="blue"
+            variant={state.showArchived ? "solid" : "ghost"}
+            onClick={() => dispatch({ type: "toggleArchived" })}
+            size="sm"
+          >
+            Archived
+          </Button>
+          <Button
+            colorScheme="blue"
+            variant={state.showPrice ? "solid" : "ghost"}
+            onClick={() => dispatch({ type: "togglePrice" })}
+            size="sm"
+          >
+            Price
           </Button>
           <Button colorScheme="green" onClick={() => dispatch({ type: "reset" })} size="sm">
             Now
