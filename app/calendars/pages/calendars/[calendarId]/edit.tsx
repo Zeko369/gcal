@@ -27,21 +27,18 @@ export const EditCalendar = () => {
     }
   }
 
+  const onDelete = async () => {
+    if (window.confirm("This will be deleted")) {
+      await deleteCalendar({ where: { id: calendar.id } })
+      await router.push("/")
+    }
+  }
+
   return (
     <VStack w="100%" align="flex-start">
       <Flex w="100%" justify="space-between">
         <Heading>Edit Calendar {calendar.id}</Heading>
-        <IconButton
-          colorScheme="red"
-          aria-label="delete"
-          icon={<DeleteIcon />}
-          onClick={async () => {
-            if (window.confirm("This will be deleted")) {
-              await deleteCalendar({ where: { id: calendar.id } })
-              await router.push("/")
-            }
-          }}
-        >
+        <IconButton colorScheme="red" aria-label="delete" icon={<DeleteIcon />} onClick={onDelete}>
           Delete
         </IconButton>
       </Flex>

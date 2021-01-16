@@ -5,6 +5,8 @@ import { Input } from "app/components/Input"
 
 export interface CalendarFormData {
   name: string
+  pricePerHour?: number | null
+  currency?: string | null
   order?: number
   color?: string | null
 }
@@ -40,6 +42,13 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
           ))}
         </Select>
       </FormControl>
+      <Input
+        name="pricePerHour"
+        label="Price per hour"
+        ref={register({ valueAsNumber: true })}
+        type="number"
+      />
+      <Input name="currency" ref={register()} type="text" />
       {update && (
         <Input
           name="order"

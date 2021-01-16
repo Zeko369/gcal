@@ -52,7 +52,7 @@ const InputComponent: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
         id={baseName}
         name={baseName}
         ref={ref}
-        placeholder={placeholder || capitalize(name)}
+        placeholder={placeholder || label || capitalize(name)}
         {...rest}
       />
       <FormErrorMessage>{error}</FormErrorMessage>
