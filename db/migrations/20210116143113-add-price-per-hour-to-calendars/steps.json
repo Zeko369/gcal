@@ -1,0 +1,19 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Calendar",
+      "field": "pricePerHour",
+      "type": "Float",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Calendar",
+      "field": "currency",
+      "type": "String",
+      "arity": "Optional"
+    }
+  ]
+}
