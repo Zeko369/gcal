@@ -1,10 +1,11 @@
 import React, { createContext, useContext } from "react"
+import { UseDisclosureReturn } from "@chakra-ui/hooks"
+import { Calendar } from "@prisma/client"
 import produce from "immer"
 import { startOfDay, startOfWeek, startOfMonth, startOfYear } from "date-fns"
 import { setCookie } from "nookies"
+
 import { cookieOptions } from "./cookie"
-import { UseDisclosureReturn } from "@chakra-ui/hooks"
-import { Calendar } from "@prisma/client"
 
 export const Scales = ["day", "week", "month", "year"] as const
 export type Scale = typeof Scales[number]
@@ -13,9 +14,11 @@ export type Action =
   | { type: "reset" }
   | { type: "val++" }
   | { type: "val--" }
+  | { type: "togglePrice" }
   | { type: "setEvents"; payload: { events: any[]; calendar: Calendar } }
 
 interface State {
+  showPrice: boolean
   date: {
     scale: Scale
     value: Date
@@ -34,6 +37,7 @@ export const intervals: { key: Scale; label: string; value: Date }[] = [
 export type Store = { state: State; dispatch: React.Dispatch<Action> }
 
 export const initialState: State = {
+  showPrice: false,
   date: {
     scale: "week",
     value: startOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -59,10 +63,12 @@ export const setValueScale = (dispatch: DT) => (value: Date, scale: Scale) => {
   setCookie(null, "value", value.toISOString(), cookieOptions)
 }
 
-const reducerHelper = (state: State, action: Action) => {
+const reducerHelper = (state: State, action: Action): State => {
   const { date } = state
 
   switch (action.type) {
+    case "togglePrice":
+      return { ...state, showPrice: !state.showPrice }
     case "setValueScale":
       return produce(state, (draft) => {
         draft.date.value = action.payload.value
@@ -97,7 +103,6 @@ const reducerHelper = (state: State, action: Action) => {
           return { ...state, date: { ...date, value: newDate } }
         }
       }
-      break
     case "val--":
       switch (date.scale) {
         case "day":
@@ -122,7 +127,6 @@ const reducerHelper = (state: State, action: Action) => {
           return { ...state, date: { ...date, value: newDate } }
         }
       }
-      break
     case "setEvents":
       return { ...state, ...action.payload }
     default:

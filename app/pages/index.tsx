@@ -6,6 +6,7 @@ import {
   Flex,
   Grid,
   Heading,
+  HStack,
   Select,
   SimpleGrid,
   Spinner,
@@ -87,9 +88,14 @@ const HomePage: React.FC = () => {
         <Heading size="md" mb="2" maxW="100%" wordBreak="break-word">
           {date}
         </Heading>
-        <Button colorScheme="green" onClick={() => dispatch({ type: "reset" })} size="sm">
-          Now
-        </Button>
+        <HStack>
+          <Button colorScheme="blue" onClick={() => dispatch({ type: "togglePrice" })} size="sm">
+            Toggle price
+          </Button>
+          <Button colorScheme="green" onClick={() => dispatch({ type: "reset" })} size="sm">
+            Now
+          </Button>
+        </HStack>
       </Flex>
       <SimpleGrid columns={[1, 3, 3, 4]} spacing={3} mt="4">
         {calendars.map((calendar) => (
