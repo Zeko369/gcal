@@ -12,7 +12,7 @@ import { RestGoogleToken } from "./RestGoogleToken"
 
 const format = (n: number) => Math.round(n * 100) / 100
 const formatTime = (curr: number, all: number): string => {
-  return `${format(curr / 59)}h [${format(all / 60)}]`
+  return `${format(curr / 60)}h [${format(all / 60)}]`
 }
 const formatPriceFn = (calendar: Calendar) => (curr: number, all: number): string => {
   const pph = calendar.pricePerHour
