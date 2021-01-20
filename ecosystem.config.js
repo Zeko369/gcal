@@ -21,7 +21,7 @@ module.exports = {
     production: {
       user: "dev",
       host: process.env.SERVER_URL,
-      ref: "origin/master",
+      ref: "origin/main",
       repo: "git@github.com:Zeko369/gcal.git",
       path: "/home/dev/deploy-gcal",
       "post-deploy": "./scripts/postDeploy.sh",
