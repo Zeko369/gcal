@@ -59,7 +59,7 @@ const Layout = ({ title, children }: LayoutProps) => {
       <Box as="main" minHeight="calc(100vh - 56px)">
         <Nav />
         <Box w="90%" maxW="1000px" m="0 auto" my="4" pb="10">
-          {children}
+          <Suspense fallback={<Spinner />}>{children}</Suspense>
         </Box>
       </Box>
 

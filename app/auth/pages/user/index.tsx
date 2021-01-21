@@ -120,7 +120,7 @@ const UserDetails: React.FC = () => {
             <LinkButton href="/calendars/new" colorScheme="green">
               Add calendar
             </LinkButton>
-            <LinkButton href="/group/new" colorScheme="green">
+            <LinkButton href="/groups/new" colorScheme="green">
               Add group
             </LinkButton>
           </HStack>
