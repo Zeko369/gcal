@@ -14,6 +14,7 @@ const createCalendar = async ({ data, groupId }: CreateCalendarInput, ctx: Ctx) 
       data: {
         user: { connect: { id: ctx.session!.userId } },
         name: "_default",
+        default: true,
       },
     })
   }
