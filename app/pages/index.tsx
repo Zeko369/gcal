@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useMemo, useReducer } from "react"
+import React, { Suspense, useCallback, useMemo, useReducer, useState } from "react"
 import { BlitzPage, GetServerSideProps, useQuery } from "blitz"
 import {
   Box,
@@ -11,6 +11,7 @@ import {
   Select,
   SimpleGrid,
   Spinner,
+  useBoolean,
   useColorModeValue,
   useDisclosure,
   VStack,
@@ -38,7 +39,8 @@ import { cookieOptions } from "app/lib/cookie"
 import { EventsModal } from "app/components/EventsModal"
 import { CalendarCard } from "app/components/CalendarCard"
 import { NavigationButton } from "app/components/NavigationButton"
-import { LinkIconButton } from "chakra-next-link"
+import { LinkButton, LinkIconButton } from "chakra-next-link"
+import homepageQuery from "app/queries/homepageQuery"
 
 const dFormat = (date: Date, scale: Scale) => {
   switch (scale) {
@@ -61,8 +63,9 @@ const dFormat = (date: Date, scale: Scale) => {
 
 const HomePage: React.FC = () => {
   const { dispatch, state, modal } = useStore()
-  const [{ calendars }] = useQuery(getCalendarsDB, {
-    where: { ...(!state.showArchived && { archivedAt: null }) },
+  const [showAll, { toggle }] = useBoolean()
+  const [groups] = useQuery(homepageQuery, {
+    showArchived: state.showArchived,
   })
 
   const onChange = useCallback(
@@ -77,6 +80,8 @@ const HomePage: React.FC = () => {
 
   const date = useMemo(() => dFormat(state.date.value, state.date.scale), [state])
   const bg = useColorModeValue("gray.100", "gray.700")
+
+  const filteredGroups = groups.filter((g) => (showAll ? true : g.default))
 
   return (
     <Box>
@@ -96,6 +101,16 @@ const HomePage: React.FC = () => {
           {date}
         </Heading>
         <HStack>
+          {groups.length > 1 && (
+            <Button
+              colorScheme="blue"
+              variant={showAll ? "solid" : "ghost"}
+              onClick={toggle}
+              size="sm"
+            >
+              {!showAll ? "Compact" : "All groups"}
+            </Button>
+          )}
           <Button
             colorScheme="blue"
             variant={state.showArchived ? "solid" : "ghost"}
@@ -117,7 +132,7 @@ const HomePage: React.FC = () => {
           </Button>
         </HStack>
       </Flex>
-      {calendars.length === 0 ? (
+      {groups.length === 0 ? (
         <Flex w="100%" justifyContent="center">
           <Box
             mt="4"
@@ -140,11 +155,28 @@ const HomePage: React.FC = () => {
           </Box>
         </Flex>
       ) : (
-        <SimpleGrid columns={[1, 3, 3, 4]} spacing={3} mt="4">
-          {calendars.map((calendar) => (
-            <CalendarCard calendar={calendar} key={calendar.id} openModal={modal?.onOpen} />
-          ))}
-        </SimpleGrid>
+        filteredGroups.map((group) => (
+          <Box key={group.id} mb="4">
+            {showAll && filteredGroups.length > 1 && (
+              <Flex w="100%" justifyContent="space-between">
+                <HStack>
+                  <Heading>{group.name}</Heading>
+                </HStack>
+                <HStack>
+                  <LinkButton size="sm" href={`/groups/${group.id}/edit`} colorScheme="green">
+                    Edit
+                  </LinkButton>
+                </HStack>
+              </Flex>
+            )}
+
+            <SimpleGrid columns={[1, 3, 3, 4]} spacing={3} mt="4">
+              {group.calendars.map((calendar) => (
+                <CalendarCard calendar={calendar} key={calendar.id} openModal={modal?.onOpen} />
+              ))}
+            </SimpleGrid>
+          </Box>
+        ))
       )}
     </Box>
   )

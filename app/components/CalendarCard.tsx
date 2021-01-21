@@ -9,6 +9,7 @@ import { useStore } from "app/lib/reducer"
 import { timeMax, timeMin } from "app/lib/time"
 import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
 import { RestGoogleToken } from "./RestGoogleToken"
+import styled from "@emotion/styled"
 
 const format = (n: number) => Math.round(n * 100) / 100
 const formatTime = (curr: number, all: number): string => {
@@ -78,6 +79,18 @@ const buttonProps = {
   size: "xs",
 }
 
+const Card = styled(VStack)`
+  #buttons {
+    display: none;
+  }
+
+  &:hover {
+    #buttons {
+      display: flex;
+    }
+  }
+`
+
 export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal }) => {
   const ref = useRef(null)
 
@@ -97,7 +110,7 @@ export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal 
   const bg = useColorModeValue("gray.100", "gray.700")
 
   return (
-    <VStack
+    <Card
       p="4"
       pt="2"
       pos="relative"
@@ -115,7 +128,7 @@ export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal 
           <CalendarEvents calendar={calendar} ref={ref} />
         </Suspense>
       </VStack>
-      <VStack ml="2" pos="absolute" top="0" right="2" bottom="0">
+      <VStack ml="2" pos="absolute" top="0" right="2" bottom="0" id="buttons">
         <LinkIconButton
           {...buttonProps}
           icon={<EditIcon />}
@@ -130,6 +143,6 @@ export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal 
         />
         <IconButton {...buttonProps} icon={<RepeatIcon />} aria-label="refresh" onClick={refetch} />
       </VStack>
-    </VStack>
+    </Card>
   )
 }

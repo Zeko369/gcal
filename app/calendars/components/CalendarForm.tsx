@@ -2,10 +2,13 @@ import React from "react"
 import { useForm } from "react-hook-form"
 import { Button, FormControl, FormLabel, Select, VStack, useTheme, Switch } from "@chakra-ui/react"
 import { Input } from "app/components/Input"
+import getGroups from "app/groups/queries/getGroups"
+import { useQuery } from "blitz"
 
 export interface CalendarFormData {
   name: string
   pricePerHour?: number | null
+  groupId: number
   currency?: string | null
   currencyBefore: boolean
   order?: number
@@ -23,6 +26,7 @@ const ignoreColors = ["transparent"]
 
 export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
   const { initialValues, update, onSubmit, children, disabled } = props
+  const [groups] = useQuery(getGroups, undefined)
   const { register, handleSubmit, formState, watch } = useForm<CalendarFormData>({
     defaultValues: initialValues,
   })
@@ -62,7 +66,20 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
           type="number"
         />
       )}
+
+      <FormControl isRequired>
+        <FormLabel htmlFor="groupId">Group</FormLabel>
+        <Select ref={register({ valueAsNumber: true })} name="groupId">
+          {groups.map((group) => (
+            <option key={group.id} value={group.id}>
+              {group.name}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+
       {children}
+
       <Button
         colorScheme="green"
         type="submit"
