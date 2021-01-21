@@ -19,7 +19,9 @@ const NewCalendarPage: BlitzPage = () => {
         return
       }
 
-      await createCalendarMutation({ data: { ...data, uuid: selectedId }, groupId: data.groupId })
+      const { groupId, ...rest } = data
+
+      await createCalendarMutation({ data: { ...rest, uuid: selectedId }, groupId })
       router.push("/")
     } catch (error) {
       alert("Error creating calendar " + JSON.stringify(error, null, 2))
