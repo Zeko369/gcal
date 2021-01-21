@@ -1,6 +1,6 @@
 import { useQuery, useSession } from "blitz"
 import getCurrentUser from "app/queries/getCurrentUser"
-import { UserSelect, User, Session, Calendar } from "@prisma/client"
+import { UserSelect, User, Session, Calendar, Group } from "@prisma/client"
 
 export interface CurrentUser {
   id: number
@@ -11,7 +11,7 @@ export interface CurrentUser {
 
 export type BaseUserSelect = "id" | "name" | "email" | "role"
 
-type A = User & { sessions: Session[]; calendars: Calendar[] }
+type A = User & { sessions: Session[]; calendars: Calendar[]; groups: Group[] }
 
 // TODO: FIX GENERIC
 export const useCurrentUser = <T extends Omit<UserSelect, BaseUserSelect>>(

@@ -9,6 +9,7 @@ import {
   Text,
   useColorMode,
   Flex,
+  HStack,
 } from "@chakra-ui/react"
 import { MoonIcon, SunIcon } from "@chakra-ui/icons"
 import { LinkButton } from "chakra-next-link"
@@ -46,6 +47,7 @@ const UserDetails: React.FC = () => {
     googleToken: true,
     calendars: true,
     sessions: true,
+    groups: true,
   })
   const { colorMode, toggleColorMode } = useColorMode()
   const confirmProps = useConfirm()
@@ -112,14 +114,20 @@ const UserDetails: React.FC = () => {
         )}
       </Section>
       <Section
-        title="Calendars"
+        title="Stats"
         right={
-          <LinkButton href="/calendars/new" colorScheme="green">
-            Add more
-          </LinkButton>
+          <HStack>
+            <LinkButton href="/calendars/new" colorScheme="green">
+              Add calendar
+            </LinkButton>
+            <LinkButton href="/group/new" colorScheme="green">
+              Add group
+            </LinkButton>
+          </HStack>
         }
       >
-        <Text>Count: {user.calendars.length}</Text>
+        <Text>Groups: {user.groups.length}</Text>
+        <Text>Calendars: {user.calendars.length}</Text>
       </Section>
       <Section title={`Theme: ${colorMode}`}>
         <Button

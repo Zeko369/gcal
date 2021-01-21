@@ -7,15 +7,18 @@ import {
   Grid,
   Heading,
   HStack,
+  IconButton,
   Select,
   SimpleGrid,
   Spinner,
+  useColorModeValue,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react"
 import { endOfWeek } from "date-fns"
 import { ParsedUrlQuery } from "querystring"
 import { GetServerSidePropsContext } from "next"
-import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
+import { AddIcon, ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
 import { parseCookies, setCookie } from "nookies"
 
 import {
@@ -35,6 +38,7 @@ import { cookieOptions } from "app/lib/cookie"
 import { EventsModal } from "app/components/EventsModal"
 import { CalendarCard } from "app/components/CalendarCard"
 import { NavigationButton } from "app/components/NavigationButton"
+import { LinkIconButton } from "chakra-next-link"
 
 const dFormat = (date: Date, scale: Scale) => {
   switch (scale) {
@@ -72,6 +76,7 @@ const HomePage: React.FC = () => {
   )
 
   const date = useMemo(() => dFormat(state.date.value, state.date.scale), [state])
+  const bg = useColorModeValue("gray.100", "gray.700")
 
   return (
     <Box>
@@ -112,11 +117,35 @@ const HomePage: React.FC = () => {
           </Button>
         </HStack>
       </Flex>
-      <SimpleGrid columns={[1, 3, 3, 4]} spacing={3} mt="4">
-        {calendars.map((calendar) => (
-          <CalendarCard calendar={calendar} key={calendar.id} openModal={modal?.onOpen} />
-        ))}
-      </SimpleGrid>
+      {calendars.length === 0 ? (
+        <Flex w="100%" justifyContent="center">
+          <Box
+            mt="4"
+            p="8"
+            shadow="md"
+            borderRadius="md"
+            alignItems="center"
+            justifyContent="center"
+            bg={bg}
+          >
+            <VStack>
+              <Heading size="lg">Add your first calendar</Heading>
+              <LinkIconButton
+                href="/calendars/new"
+                borderRadius="50%"
+                icon={<AddIcon />}
+                aria-label="Add calendar"
+              />
+            </VStack>
+          </Box>
+        </Flex>
+      ) : (
+        <SimpleGrid columns={[1, 3, 3, 4]} spacing={3} mt="4">
+          {calendars.map((calendar) => (
+            <CalendarCard calendar={calendar} key={calendar.id} openModal={modal?.onOpen} />
+          ))}
+        </SimpleGrid>
+      )}
     </Box>
   )
 }
