@@ -31,11 +31,14 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
       const currencyBefore = calendar.currencyBefore ? calendar.currency || "Na" : ""
       const currencyAfter = calendar.currencyBefore ? "" : calendar.currency || "Na"
 
-      return pph
-        ? `${currencyBefore}${(curr / 59) * pph}${currencyAfter} [${currencyBefore}${
-            (all / 60) * pph
-          }${currencyAfter}]`
-        : "No pph"
+      if (!pph) {
+        return "No PPH"
+      }
+
+      const done = `${currencyBefore}${format((curr / 60) * pph)}${currencyAfter}`
+      const todo = `[${currencyBefore}${format((all / 60) * pph)}${currencyAfter}]`
+
+      return `${done} ${todo}`
     },
     [calendar]
   )
