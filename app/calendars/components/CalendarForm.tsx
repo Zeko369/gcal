@@ -8,7 +8,7 @@ import { useQuery } from "blitz"
 export interface CalendarFormData {
   name: string
   pricePerHour?: number | null
-  groupId: number
+  groupId?: number
   currency?: string | null
   currencyBefore: boolean
   order?: number
@@ -67,16 +67,18 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
         />
       )}
 
-      <FormControl isRequired>
-        <FormLabel htmlFor="groupId">Group</FormLabel>
-        <Select ref={register({ valueAsNumber: true })} name="groupId">
-          {groups.map((group) => (
-            <option key={group.id} value={group.id}>
-              {group.name}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
+      {groups.length > 0 && (
+        <FormControl isRequired>
+          <FormLabel htmlFor="groupId">Group</FormLabel>
+          <Select ref={register({ valueAsNumber: true })} name="groupId">
+            {groups.map((group) => (
+              <option key={group.id} value={group.id}>
+                {group.name}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+      )}
 
       {children}
 
