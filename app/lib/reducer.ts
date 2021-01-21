@@ -107,6 +107,8 @@ const reducerHelper = (state: State, action: Action): State => {
           newDate.setFullYear(newDate.getFullYear() + 1)
           return { ...state, date: { ...date, value: newDate } }
         }
+        default:
+          return state
       }
     case "val--":
       switch (date.scale) {
@@ -131,6 +133,8 @@ const reducerHelper = (state: State, action: Action): State => {
           newDate.setFullYear(newDate.getFullYear() - 1)
           return { ...state, date: { ...date, value: newDate } }
         }
+        default:
+          return state
       }
     case "setEvents":
       return { ...state, ...action.payload }

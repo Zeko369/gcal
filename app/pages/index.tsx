@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useMemo, useReducer, useState } from "react"
+import React, { Suspense, useCallback, useMemo, useReducer } from "react"
 import { BlitzPage, GetServerSideProps, useQuery } from "blitz"
 import {
   Box,
@@ -7,7 +7,6 @@ import {
   Grid,
   Heading,
   HStack,
-  IconButton,
   Select,
   SimpleGrid,
   Spinner,
@@ -34,7 +33,6 @@ import {
 } from "app/lib/reducer"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
-import getCalendarsDB from "app/calendars/queries/getCalendars"
 import { cookieOptions } from "app/lib/cookie"
 import { EventsModal } from "app/components/EventsModal"
 import { CalendarCard } from "app/components/CalendarCard"

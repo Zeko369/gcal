@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect, useMemo } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import { Link, LinkButton } from "chakra-next-link"
 import signup from "app/auth/mutations/signup"
 import { Button, Flex, Heading, Stack } from "@chakra-ui/react"

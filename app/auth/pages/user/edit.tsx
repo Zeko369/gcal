@@ -83,7 +83,7 @@ const PasswordForm: React.FC = () => {
         }
       })
     }
-  }, [current_password, setError, clearErrors])
+  }, [current_password, setError, clearErrors, isCurrentPasswordOkMutation])
 
   const [changePasswordMutation] = useMutation(changePassword)
 

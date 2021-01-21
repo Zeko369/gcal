@@ -12,20 +12,7 @@ import { RestGoogleToken } from "./RestGoogleToken"
 import styled from "@emotion/styled"
 
 const format = (n: number) => Math.round(n * 100) / 100
-const formatTime = (curr: number, all: number): string => {
-  return `${format(curr / 60)}h [${format(all / 60)}]`
-}
-const formatPriceFn = (calendar: Calendar) => (curr: number, all: number): string => {
-  const pph = calendar.pricePerHour
-  const currencyBefore = calendar.currencyBefore ? calendar.currency || "Na" : ""
-  const currencyAfter = calendar.currencyBefore ? "" : calendar.currency || "Na"
-
-  return pph
-    ? `${currencyBefore}${(curr / 60) * pph}${currencyAfter} [${currencyBefore}${
-        (all / 60) * pph
-      }${currencyAfter}]`
-    : "No pph"
-}
+const formatTime = (curr: number, all: number) => `${format(curr / 60)}h [${format(all / 60)}]`
 
 type CalendarEventsProps = { calendar: Calendar }
 const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
@@ -38,7 +25,20 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
   }
 
   const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, args)
-  const formatPrice = useCallback(formatPriceFn(calendar), [calendar])
+  const formatPrice = useCallback(
+    (curr: number, all: number): string => {
+      const pph = calendar.pricePerHour
+      const currencyBefore = calendar.currencyBefore ? calendar.currency || "Na" : ""
+      const currencyAfter = calendar.currencyBefore ? "" : calendar.currency || "Na"
+
+      return pph
+        ? `${currencyBefore}${(curr / 59) * pph}${currencyAfter} [${currencyBefore}${
+            (all / 60) * pph
+          }${currencyAfter}]`
+        : "No pph"
+    },
+    [calendar]
+  )
 
   useImperativeHandle(ref, () => ({
     refetch,
