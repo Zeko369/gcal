@@ -1,10 +1,25 @@
 import React, { ReactNode, Suspense } from "react"
 import { Head, useMutation } from "blitz"
-import { HStack, Flex, Box, Heading, Avatar, Button, Spinner } from "@chakra-ui/react"
+import {
+  HStack,
+  Flex,
+  Box,
+  Heading,
+  Avatar,
+  Button,
+  Spinner,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  useColorMode,
+  Text,
+} from "@chakra-ui/react"
 import { Link, LinkButton } from "chakra-next-link"
 import NextLink from "next/link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import logout from "app/auth/mutations/logout"
+import { MoonIcon, SunIcon } from "@chakra-ui/icons"
 
 type LayoutProps = {
   title?: string
@@ -14,18 +29,35 @@ type LayoutProps = {
 const User: React.FC = () => {
   const [currentUser] = useCurrentUser()
   const [logoutMutation] = useMutation(logout)
+  const { colorMode, toggleColorMode } = useColorMode()
+  const dark = colorMode === "dark"
 
   return currentUser ? (
-    <HStack alignItems="center">
-      <Button onClick={async () => await logoutMutation()}>Logout</Button>
-      <NextLink href="/user">
+    <Menu>
+      <MenuButton>
         <Avatar name={currentUser?.name || ""} cursor="pointer" />
-      </NextLink>
-    </HStack>
+      </MenuButton>
+      <MenuList>
+        <MenuItem
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            toggleColorMode()
+          }}
+        >
+          <HStack align="center">
+            {dark ? <MoonIcon /> : <SunIcon />}
+            <Text>{dark ? "Dark" : "Light"} theme</Text>
+          </HStack>
+        </MenuItem>
+        <Link href="/user">
+          <MenuItem>Profile</MenuItem>
+        </Link>
+        <MenuItem onClick={async () => await logoutMutation()}>Logout</MenuItem>
+      </MenuList>
+    </Menu>
   ) : (
-    <HStack>
-      <LinkButton href="/login">Login</LinkButton>
-    </HStack>
+    <LinkButton href="/login">Login</LinkButton>
   )
 }
 
