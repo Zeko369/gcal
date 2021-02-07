@@ -214,7 +214,7 @@ const Home: BlitzPage<HomeProps> = ({ date }) => {
   return (
     <StoreContext.Provider value={{ dispatch, state, modal }}>
       <EventsModal modal={modal} />
-      <Suspense fallback={() => <Spinner />}>
+      <Suspense fallback={<Spinner />}>
         <Main />
       </Suspense>
     </StoreContext.Provider>
