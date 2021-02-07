@@ -10,7 +10,6 @@ import {
   Select,
   SimpleGrid,
   Spinner,
-  useBoolean,
   useColorModeValue,
   useDisclosure,
   VStack,
@@ -39,6 +38,11 @@ import { CalendarCard } from "app/components/CalendarCard"
 import { NavigationButton } from "app/components/NavigationButton"
 import { LinkButton, LinkIconButton } from "chakra-next-link"
 import homepageQuery from "app/queries/homepageQuery"
+import {
+  DATE_SCALE_COOKIE_NAME,
+  DATE_VALUE_COOKIE_NAME,
+  SHOW_ALL_COOKIE_NAME,
+} from "app/constants/cookies"
 
 const dFormat = (date: Date, scale: Scale) => {
   switch (scale) {
@@ -61,7 +65,6 @@ const dFormat = (date: Date, scale: Scale) => {
 
 const HomePage: React.FC = () => {
   const { dispatch, state, modal } = useStore()
-  const [showAll, { toggle }] = useBoolean()
   const [groups] = useQuery(homepageQuery, {
     showArchived: state.showArchived,
   })
@@ -79,7 +82,7 @@ const HomePage: React.FC = () => {
   const date = useMemo(() => dFormat(state.date.value, state.date.scale), [state])
   const bg = useColorModeValue("gray.100", "gray.700")
 
-  const filteredGroups = groups.filter((g) => (showAll ? true : g.default))
+  const filteredGroups = groups.filter((g) => (state.showAll ? true : g.default))
 
   return (
     <Box>
@@ -102,11 +105,11 @@ const HomePage: React.FC = () => {
           {groups.length > 1 && (
             <Button
               colorScheme="blue"
-              variant={showAll ? "solid" : "ghost"}
-              onClick={toggle}
+              variant={state.showAll ? "solid" : "ghost"}
+              onClick={() => dispatch({ type: "toggleAll" })}
               size="sm"
             >
-              {!showAll ? "Compact" : "All groups"}
+              {!state.showAll ? "Compact" : "All groups"}
             </Button>
           )}
           <Button
@@ -155,7 +158,7 @@ const HomePage: React.FC = () => {
       ) : (
         filteredGroups.map((group) => (
           <Box key={group.id} mb="4">
-            {showAll && filteredGroups.length > 1 && (
+            {state.showAll && filteredGroups.length > 1 && (
               <Flex w="100%" justifyContent="space-between">
                 <HStack>
                   <Heading>{group.name}</Heading>
@@ -195,20 +198,24 @@ const Main: React.FC = () => {
 
 interface HomeProps {
   date: Partial<{ value: string; scale: Scale }>
+  all?: boolean
 }
 
-const init = (date: HomeProps["date"]): Store["state"] => {
+const init = (props: HomeProps): Store["state"] => {
+  console.log(props)
+
   return {
     ...initialState,
+    showAll: !!props.all,
     date: {
-      scale: date.scale || initialState.date.scale,
-      value: date.value ? new Date(date.value) : initialState.date.value,
+      scale: props.date.scale || initialState.date.scale,
+      value: props.date.value ? new Date(props.date.value) : initialState.date.value,
     },
   }
 }
 
-const Home: BlitzPage<HomeProps> = ({ date }) => {
-  const [state, dispatch] = useReducer<typeof reducer, HomeProps["date"]>(reducer, date, init)
+const Home: BlitzPage<HomeProps> = (props) => {
+  const [state, dispatch] = useReducer<typeof reducer, HomeProps>(reducer, props, init)
   const modal = useDisclosure()
 
   return (
@@ -221,12 +228,13 @@ const Home: BlitzPage<HomeProps> = ({ date }) => {
   )
 }
 
-const handleCookie = <T extends String | Scale>(
+const handleCookie = (
   cookies: Record<string, string>,
-  ctx: GetServerSidePropsContext<ParsedUrlQuery>,
+  ctx: GetServerSidePropsContext<ParsedUrlQuery>
+) => <T extends String | Scale | boolean>(
   key: string,
   handle: (val: any) => T,
-  defaultValue: string
+  defaultValue: string | boolean
 ): T | undefined => {
   try {
     if (!cookies[key]) {
@@ -236,6 +244,10 @@ const handleCookie = <T extends String | Scale>(
     const val = handle(cookies[key])
     setCookie(ctx, key, val.toString(), cookieOptions)
 
+    if (val === true || val === false) {
+      return val
+    }
+
     // @ts-ignore
     return val.toString()
   } catch (err) {
@@ -243,7 +255,7 @@ const handleCookie = <T extends String | Scale>(
       console.error(err)
     }
 
-    setCookie(ctx, key, defaultValue, cookieOptions)
+    setCookie(ctx, key, String(defaultValue), cookieOptions)
 
     // @ts-ignore
     return defaultValue
@@ -253,12 +265,20 @@ const handleCookie = <T extends String | Scale>(
 const d = (val: string | Date) => new Date(val).toISOString()
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (ctx) => {
   const c = parseCookies(ctx)
-  const output: HomeProps["date"] = {}
+  const cook = handleCookie(c, ctx)
 
-  output.value = handleCookie(c, ctx, "value", (val) => d(val), d(initialState.date.value))
-  output.scale = handleCookie(c, ctx, "scale", (val) => val as Scale, initialState.date.scale)
+  const value = cook(DATE_VALUE_COOKIE_NAME, (val) => d(val), d(initialState.date.value))
+  const scale = cook(DATE_SCALE_COOKIE_NAME, (val) => val as Scale, initialState.date.scale)
 
-  return { props: { date: output } }
+  return {
+    props: {
+      all: cook(SHOW_ALL_COOKIE_NAME, (val) => val === "true", true),
+      date: {
+        value,
+        scale,
+      },
+    },
+  }
 }
 
 Home.getLayout = (page) => <Layout title="Home">{page}</Layout>

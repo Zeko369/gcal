@@ -6,6 +6,11 @@ import { startOfDay, startOfWeek, startOfMonth, startOfYear } from "date-fns"
 import { setCookie } from "nookies"
 
 import { cookieOptions } from "./cookie"
+import {
+  DATE_SCALE_COOKIE_NAME,
+  DATE_VALUE_COOKIE_NAME,
+  SHOW_ALL_COOKIE_NAME,
+} from "app/constants/cookies"
 
 export const Scales = ["day", "week", "month", "year"] as const
 export type Scale = typeof Scales[number]
@@ -16,9 +21,11 @@ export type Action =
   | { type: "val--" }
   | { type: "toggleArchived" }
   | { type: "togglePrice" }
+  | { type: "toggleAll" }
   | { type: "setEvents"; payload: { events: any[]; calendar: Calendar } }
 
 interface State {
+  showAll: boolean
   showPrice: boolean
   showArchived: boolean
   date: {
@@ -46,6 +53,7 @@ export const intervals: { key: Scale; label: string; value: Date }[] = [
 export type Store = { state: State; dispatch: React.Dispatch<Action> }
 
 export const initialState: State = {
+  showAll: false,
   showPrice: false,
   showArchived: false,
   date: {
@@ -69,14 +77,16 @@ type DT = React.Dispatch<Action>
 
 export const setValueScale = (dispatch: DT) => (value: Date, scale: Scale) => {
   dispatch({ type: "setValueScale", payload: { value, scale } })
-  setCookie(null, "scale", scale, cookieOptions)
-  setCookie(null, "value", value.toISOString(), cookieOptions)
+  setCookie(null, DATE_SCALE_COOKIE_NAME, scale, cookieOptions)
+  setCookie(null, DATE_VALUE_COOKIE_NAME, value.toISOString(), cookieOptions)
 }
 
 const reducerHelper = (state: State, action: Action): State => {
   const { date } = state
 
   switch (action.type) {
+    case "toggleAll":
+      return { ...state, showAll: !state.showAll }
     case "toggleArchived":
       return { ...state, showArchived: !state.showArchived }
     case "togglePrice":
@@ -154,7 +164,11 @@ export const reducer = (state: State, action: Action): State => {
   const newState = reducerHelper(state, action)
 
   if (state.date.value !== newState.date.value) {
-    setCookie(null, "value", newState.date.value.toISOString(), cookieOptions)
+    setCookie(null, DATE_VALUE_COOKIE_NAME, newState.date.value.toISOString(), cookieOptions)
+  }
+
+  if (state.showAll !== newState.showAll) {
+    setCookie(null, SHOW_ALL_COOKIE_NAME, String(newState.showAll), cookieOptions)
   }
 
   return newState

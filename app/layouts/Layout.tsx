@@ -14,12 +14,13 @@ import {
   MenuList,
   useColorMode,
   Text,
+  MenuDivider,
 } from "@chakra-ui/react"
 import { Link, LinkButton } from "chakra-next-link"
 import NextLink from "next/link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import logout from "app/auth/mutations/logout"
-import { MoonIcon, SunIcon } from "@chakra-ui/icons"
+import { AddIcon, MoonIcon, SettingsIcon, SunIcon } from "@chakra-ui/icons"
 
 type LayoutProps = {
   title?: string
@@ -38,24 +39,16 @@ const User: React.FC = () => {
         <Avatar name={currentUser?.name || ""} cursor="pointer" />
       </MenuButton>
       <MenuList>
-        <MenuItem
-          onClick={(e) => {
-            e.stopPropagation()
-            e.preventDefault()
-            toggleColorMode()
-          }}
-        >
-          <HStack align="center">
-            {dark ? <MoonIcon /> : <SunIcon />}
-            <Text>{dark ? "Dark" : "Light"} theme</Text>
-          </HStack>
+        <MenuItem icon={dark ? <MoonIcon /> : <SunIcon />} onClick={toggleColorMode}>
+          <Text>{dark ? "Dark" : "Light"} theme</Text>
         </MenuItem>
         <Link href="/user">
-          <MenuItem>Profile</MenuItem>
+          <MenuItem icon={<SettingsIcon />}>Settings</MenuItem>
         </Link>
         <Link href="/calendars/new">
-          <MenuItem>New calendar</MenuItem>
+          <MenuItem icon={<AddIcon />}>New calendar</MenuItem>
         </Link>
+        <MenuDivider />
         <MenuItem onClick={async () => await logoutMutation()}>Logout</MenuItem>
       </MenuList>
     </Menu>
