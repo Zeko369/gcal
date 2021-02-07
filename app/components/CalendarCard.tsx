@@ -58,8 +58,10 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
     )
   }
 
+  const opacity = state.showPrice ? (calendar.pricePerHour ? 1 : 0.6) : 1
+
   return (
-    <VStack align="flex-start" spacing="1">
+    <VStack align="flex-start" spacing="1" opacity={opacity}>
       <Heading fontSize="lg" color="black">
         {state.showPrice ? (
           <strong>{formatPrice(data.soFar, data.all)}</strong>
