@@ -8,7 +8,13 @@ type CreateCalendarInput = {
 const createCalendar = async ({ data, groupId }: CreateCalendarInput, ctx: Ctx) => {
   ctx.session.authorize()
 
-  let group = await db.group.findFirst({ where: { OR: [{ default: true }, { id: groupId }] } })
+  // get by id
+  let group = await db.group.findOne({ where: { id: groupId } })
+
+  // if not found get default
+  if (!group) group = await db.group.findFirst({ where: { default: true } })
+
+  // if no default create one
   if (!group) {
     group = await db.group.create({
       data: {
