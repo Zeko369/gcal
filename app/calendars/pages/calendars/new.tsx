@@ -42,8 +42,6 @@ const NewCalendarPage: BlitzPage = () => {
 
       <Heading>Create New Calendar</Heading>
 
-      <Link href="/calendars">Calendars</Link>
-
       <CalendarForm onSubmit={onSubmit} disabled={!selectedId}>
         <Suspense fallback={<Spinner />}>
           <ListGcal selectedId={selectedId} select={select} />

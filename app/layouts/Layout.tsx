@@ -53,6 +53,9 @@ const User: React.FC = () => {
         <Link href="/user">
           <MenuItem>Profile</MenuItem>
         </Link>
+        <Link href="/calendars/new">
+          <MenuItem>New calendar</MenuItem>
+        </Link>
         <MenuItem onClick={async () => await logoutMutation()}>Logout</MenuItem>
       </MenuList>
     </Menu>
