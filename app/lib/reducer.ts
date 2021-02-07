@@ -25,7 +25,14 @@ interface State {
     scale: Scale
     value: Date
   }
-  events: any[]
+  events: {
+    allDay: boolean
+    summary: string
+    days: any
+    time: number
+    planned: boolean
+    [key: string]: any
+  }[]
   calendar?: Calendar
 }
 

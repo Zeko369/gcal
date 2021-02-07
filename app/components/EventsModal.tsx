@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import {
   UseDisclosureReturn,
   Modal,
@@ -12,8 +12,10 @@ import {
   ListItem,
   ListIcon,
   Button,
+  HStack,
+  useBoolean,
 } from "@chakra-ui/react"
-import { useStore } from "app/lib/reducer"
+import { useStore, Store } from "app/lib/reducer"
 
 interface EventModalProps {
   modal: UseDisclosureReturn
@@ -24,7 +26,24 @@ const CheckIcon: React.FC<{ value: boolean }> = ({ value }) => {
 }
 
 export const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
+  const [combine, { toggle, off }] = useBoolean(false)
   const { state } = useStore()
+
+  // config for this
+  useEffect(off, [modal.isOpen, off])
+
+  const events = combine
+    ? state.events.reduce((data, curr) => {
+        const foundIndex = data.findIndex((event) => event.summary === curr.summary)
+        if (foundIndex !== -1) {
+          return data.map((event, index) =>
+            index === foundIndex ? { ...event, time: event.time + curr.time } : event
+          )
+        }
+
+        return [...data, curr]
+      }, [] as Store["state"]["events"])
+    : state.events
 
   return (
     <Modal isOpen={modal.isOpen} onClose={modal.onClose}>
@@ -36,7 +55,7 @@ export const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
             <ModalCloseButton />
             <ModalBody>
               <List spacing={2}>
-                {state.events.map((event) => (
+                {events.map((event) => (
                   <ListItem d="flex" key={event.id}>
                     <ListIcon as={() => <CheckIcon value={event.planned} />} color="green.500" />
                     {`${new Date(event.start).toDateString()} => [${event.time / 60}h]`}
@@ -48,9 +67,12 @@ export const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
             </ModalBody>
 
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={modal.onClose}>
-                Close
-              </Button>
+              <HStack>
+                <Button onClick={toggle}>{combine ? "Each event" : "Combine"}</Button>
+                <Button colorScheme="blue" mr={3} onClick={modal.onClose}>
+                  Close
+                </Button>
+              </HStack>
             </ModalFooter>
           </>
         ) : (
