@@ -59,7 +59,7 @@ export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
       <Input name="name" ref={register({ required: true })} isRequired />
       <FormControl isRequired>
         <FormLabel htmlFor="color">Color</FormLabel>
-        <SimpleGrid columns={9} gap="1">
+        <SimpleGrid columns={[3, 9]} gap="1">
           {colors.map((color) => {
             const hasPalette = !noNumber.includes(color)
             const bg = `${color}${hasPalette ? `.${CALENDAR_CARD_COLOR_VARIANT}` : ""}`
