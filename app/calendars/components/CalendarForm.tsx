@@ -1,9 +1,22 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { Button, FormControl, FormLabel, Select, VStack, useTheme, Switch } from "@chakra-ui/react"
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Select,
+  VStack,
+  useTheme,
+  Switch,
+  Text,
+  SimpleGrid,
+  Flex,
+} from "@chakra-ui/react"
 import { Input } from "app/components/Input"
 import getGroups from "app/groups/queries/getGroups"
 import { useQuery } from "blitz"
+import { CheckCircleIcon } from "@chakra-ui/icons"
+import { CALENDAR_CARD_COLOR_VARIANT } from "app/constants/colors"
 
 export interface CalendarFormData {
   name: string
@@ -22,30 +35,54 @@ interface CalendarFormProps {
   update?: boolean
 }
 
-const ignoreColors = ["transparent"]
+const ignoreColors = ["transparent", "current", "whiteAlpha", "blackAlpha"]
+const noNumber = ["current", "white", "black"]
 
 export const CalendarForm: React.FC<CalendarFormProps> = (props) => {
   const { initialValues, update, onSubmit, children, disabled } = props
   const [groups] = useQuery(getGroups, undefined)
-  const { register, handleSubmit, formState, watch } = useForm<CalendarFormData>({
+  const { register, handleSubmit, formState, watch, setValue } = useForm<CalendarFormData>({
     defaultValues: initialValues,
   })
 
   const theme = useTheme()
   const colors = Object.keys(theme.colors).filter((color) => !ignoreColors.includes(color))
 
-  const color = watch("color")
+  useEffect(() => {
+    register("color")
+  }, [register])
+
+  const selectedColor = watch("color")
 
   return (
     <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="flex-start">
       <Input name="name" ref={register({ required: true })} isRequired />
       <FormControl isRequired>
         <FormLabel htmlFor="color">Color</FormLabel>
-        <Select ref={register({ required: true })} isRequired name="color" bg={`${color}.300`}>
-          {colors.map((color) => (
-            <option value={color}>{color}</option>
-          ))}
-        </Select>
+        <SimpleGrid columns={9} gap="1">
+          {colors.map((color) => {
+            const hasPalette = !noNumber.includes(color)
+            const bg = `${color}${hasPalette ? `.${CALENDAR_CARD_COLOR_VARIANT}` : ""}`
+            const check = hasPalette ? `${color}.800` : "red.500"
+
+            return (
+              <Flex
+                bg={bg}
+                h="16"
+                justifyContent="center"
+                alignItems="center"
+                pos="relative"
+                cursor="pointer"
+                onClick={() => setValue("color", color)}
+              >
+                {selectedColor === color && (
+                  <CheckCircleIcon pos="absolute" top="1" right="1" h="5" w="5" color={check} />
+                )}
+                <Text>{color}</Text>
+              </Flex>
+            )
+          })}
+        </SimpleGrid>
       </FormControl>
       <Input
         name="pricePerHour"

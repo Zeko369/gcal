@@ -1,0 +1,1 @@
+export const CALENDAR_CARD_COLOR_VARIANT = "300"

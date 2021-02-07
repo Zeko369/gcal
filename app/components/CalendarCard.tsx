@@ -10,6 +10,7 @@ import { timeMax, timeMin } from "app/lib/time"
 import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
 import { RestGoogleToken } from "./RestGoogleToken"
 import styled from "@emotion/styled"
+import { CALENDAR_CARD_COLOR_VARIANT } from "app/constants/colors"
 
 const format = (n: number) => Math.round(n * 100) / 100
 const formatTime = (curr: number, all: number) => `${format(curr / 60)}h [${format(all / 60)}]`
@@ -120,7 +121,7 @@ export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal 
       shadow="md"
       borderRadius="md"
       align="flex-start"
-      bg={calendar.color ? `${calendar.color}.300` : bg}
+      bg={calendar.color ? `${calendar.color}.${CALENDAR_CARD_COLOR_VARIANT}` : bg}
       key={calendar.id}
     >
       <VStack align="left">
