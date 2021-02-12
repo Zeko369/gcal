@@ -21,5 +21,6 @@ export const useCurrentUser = <T extends Omit<UserSelect, BaseUserSelect>>(
   const [user, { refetch }] = useQuery(getCurrentUser, userSelect || {}, {
     enabled: !!session.userId,
   })
+
   return [session.userId ? (user as any) : null, refetch]
 }

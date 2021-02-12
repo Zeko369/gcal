@@ -202,8 +202,6 @@ interface HomeProps {
 }
 
 const init = (props: HomeProps): Store["state"] => {
-  console.log(props)
-
   return {
     ...initialState,
     showAll: !!props.all,
