@@ -34,7 +34,9 @@ export const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
 
   const events = combine
     ? state.events.reduce((data, curr) => {
-        const foundIndex = data.findIndex((event) => event.summary === curr.summary)
+        const foundIndex = data.findIndex(
+          (event) => event.summary.toUpperCase() === curr.summary.toUpperCase()
+        )
         if (foundIndex !== -1) {
           return data.map((event, index) =>
             index === foundIndex ? { ...event, time: event.time + curr.time } : event
