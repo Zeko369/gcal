@@ -8,7 +8,7 @@ import { AuthContext } from "./AuthLayout"
 import { useMutation } from "blitz"
 
 type LoginFormProps = {
-  onSuccess?: () => void
+  onSuccess?: (email: string) => void
 }
 
 interface LoginFormData {
@@ -44,7 +44,7 @@ export const LoginForm = (props: LoginFormProps) => {
   const onSubmit = async (values: LoginFormData) => {
     try {
       await loginMutation({ email: values.email, password: values.password })
-      props.onSuccess && props.onSuccess()
+      props.onSuccess && props.onSuccess(values.email)
     } catch (error) {
       if (error.name === "AuthenticationError") {
         setError("email", { message: "Sorry, those credentials are invalid" })

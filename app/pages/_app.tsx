@@ -3,8 +3,14 @@ import { AppProps, ErrorComponent, useRouter } from "blitz"
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
 import { ChakraProvider } from "@chakra-ui/react"
 import { queryCache } from "react-query"
+import splitbee from "@splitbee/web"
+
 import LoginForm from "app/auth/components/LoginForm"
 import { Global } from "app/styles/Global"
+
+if (process.env.SPLITBEE_TOKEN) {
+  splitbee.init({ token: process.env.SPLITBEE_TOKEN })
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   const getLayout = Component.getLayout || ((page) => page)
