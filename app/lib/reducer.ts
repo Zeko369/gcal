@@ -22,6 +22,7 @@ export type Action =
   | { type: "toggleArchived" }
   | { type: "togglePrice" }
   | { type: "toggleAll" }
+  | { type: "addCalendarData"; payload: { calendarId: number; done: number; all: number } }
   | { type: "setEvents"; payload: { events: any[]; calendar: Calendar } }
 
 interface State {
@@ -31,6 +32,12 @@ interface State {
   date: {
     scale: Scale
     value: Date
+  }
+  normalizedSums: {
+    [calendarId: number]: {
+      done: number
+      all: number
+    }
   }
   events: {
     allDay: boolean
@@ -56,6 +63,7 @@ export const initialState: State = {
   showAll: false,
   showPrice: false,
   showArchived: false,
+  normalizedSums: {},
   date: {
     scale: "week",
     value: startOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -155,6 +163,17 @@ const reducerHelper = (state: State, action: Action): State => {
       }
     case "setEvents":
       return { ...state, ...action.payload }
+    case "addCalendarData":
+      return {
+        ...state,
+        normalizedSums: {
+          ...state.normalizedSums,
+          [action.payload.calendarId]: {
+            done: action.payload.done,
+            all: action.payload.all,
+          },
+        },
+      }
     default:
       return state
   }

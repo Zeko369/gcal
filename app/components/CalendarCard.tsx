@@ -1,4 +1,11 @@
-import React, { forwardRef, Suspense, useCallback, useImperativeHandle, useRef } from "react"
+import React, {
+  forwardRef,
+  Suspense,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react"
 import { useQuery } from "blitz"
 import { LinkIconButton } from "chakra-next-link"
 import { Heading, VStack, useColorModeValue, Spinner, IconButton, Text } from "@chakra-ui/react"
@@ -13,7 +20,8 @@ import styled from "@emotion/styled"
 import { CALENDAR_CARD_COLOR_VARIANT } from "app/constants/colors"
 
 const format = (n: number) => Math.round(n * 100) / 100
-const formatTime = (curr: number, all: number) => `${format(curr / 60)}h [${format(all / 60)}]`
+export const formatTime = (curr: number, all: number) =>
+  `${format(curr / 60)}h [${format(all / 60)}]`
 
 type CalendarEventsProps = { calendar: Calendar }
 const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
@@ -43,6 +51,17 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
     },
     [calendar]
   )
+
+  useEffect(() => {
+    dispatch({
+      type: "addCalendarData",
+      payload: {
+        calendarId: calendar.id,
+        done: data.soFar,
+        all: data.all,
+      },
+    })
+  }, [data])
 
   useImperativeHandle(ref, () => ({
     refetch,

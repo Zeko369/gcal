@@ -12,7 +12,9 @@ import {
   Spinner,
   useColorModeValue,
   useDisclosure,
+  Text,
   VStack,
+  useBoolean,
 } from "@chakra-ui/react"
 import { endOfWeek } from "date-fns"
 import { ParsedUrlQuery } from "querystring"
@@ -34,7 +36,7 @@ import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
 import { cookieOptions } from "app/lib/cookie"
 import { EventsModal } from "app/components/EventsModal"
-import { CalendarCard } from "app/components/CalendarCard"
+import { CalendarCard, formatTime } from "app/components/CalendarCard"
 import { NavigationButton } from "app/components/NavigationButton"
 import { LinkButton, LinkIconButton } from "chakra-next-link"
 import homepageQuery from "app/queries/homepageQuery"
@@ -65,6 +67,7 @@ const dFormat = (date: Date, scale: Scale) => {
 
 const HomePage: React.FC = () => {
   const { dispatch, state, modal } = useStore()
+  const [showCombinedPrices, { toggle }] = useBoolean()
   const [groups] = useQuery(homepageQuery, {
     showArchived: state.showArchived,
   })
@@ -83,6 +86,21 @@ const HomePage: React.FC = () => {
   const bg = useColorModeValue("gray.100", "gray.700")
 
   const filteredGroups = groups.filter((g) => (state.showAll ? true : g.default))
+  const combinedPrices = filteredGroups.map((group) =>
+    group.calendars.reduce(
+      (combined, curr) => {
+        const [done, all] = combined
+        const data = state.normalizedSums[curr.id]
+
+        if (data) {
+          return [done + data.done, all + data.all]
+        }
+
+        return [done, all]
+      },
+      [0, 0]
+    )
+  )
 
   return (
     <Box>
@@ -122,6 +140,14 @@ const HomePage: React.FC = () => {
           </Button>
           <Button
             colorScheme="blue"
+            variant={showCombinedPrices ? "solid" : "ghost"}
+            onClick={toggle}
+            size="sm"
+          >
+            {showCombinedPrices ? "Hide" : "Show"} combined
+          </Button>
+          <Button
+            colorScheme="blue"
             variant={state.showPrice ? "solid" : "ghost"}
             onClick={() => dispatch({ type: "togglePrice" })}
             size="sm"
@@ -156,12 +182,19 @@ const HomePage: React.FC = () => {
           </Box>
         </Flex>
       ) : (
-        filteredGroups.map((group) => (
+        filteredGroups.map((group, index) => (
           <Box key={group.id} mb="4">
             {state.showAll && filteredGroups.length > 1 && (
               <Flex w="100%" justifyContent="space-between">
                 <HStack>
-                  <Heading>{group.name}</Heading>
+                  <Heading>
+                    {group.name}
+                    {showCombinedPrices && (
+                      <Text d="inline" ml="4">
+                        {formatTime(combinedPrices[index][0], combinedPrices[index][1])}
+                      </Text>
+                    )}
+                  </Heading>
                 </HStack>
                 <HStack>
                   <LinkButton size="sm" href={`/groups/${group.id}/edit`} colorScheme="green">
