@@ -45,6 +45,7 @@ import {
   DATE_VALUE_COOKIE_NAME,
   SHOW_ALL_COOKIE_NAME,
 } from "app/constants/cookies"
+import splitbee from "@splitbee/web"
 
 const dFormat = (date: Date, scale: Scale) => {
   switch (scale) {
@@ -192,6 +193,7 @@ const HomePage: React.FC = () => {
               <Heading size="lg">Add your first calendar</Heading>
               <LinkIconButton
                 href="/calendars/new"
+                onClick={() => splitbee.track("calendar:first")}
                 borderRadius="50%"
                 icon={<AddIcon />}
                 aria-label="Add calendar"
