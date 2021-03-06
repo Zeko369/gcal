@@ -14,6 +14,9 @@ const homepageQuery = async ({ showArchived }: { showArchived: boolean }, ctx: C
         },
       },
     },
+    where: {
+      userId: ctx.session.userId,
+    },
   })
   return groups
 }
