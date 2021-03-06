@@ -8,6 +8,7 @@ const homepageQuery = async ({ showArchived }: { showArchived: boolean }, ctx: C
     orderBy: [{ default: "desc" }, { createdAt: "asc" }],
     include: {
       calendars: {
+        orderBy: { id: "asc" },
         where: {
           ...(!showArchived && { archivedAt: null }),
         },
