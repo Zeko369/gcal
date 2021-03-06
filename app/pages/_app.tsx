@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { AppProps, ErrorComponent, useRouter } from "blitz"
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
 import { ChakraProvider } from "@chakra-ui/react"
@@ -7,14 +7,33 @@ import splitbee from "@splitbee/web"
 
 import LoginForm from "app/auth/components/LoginForm"
 import { Global } from "app/styles/Global"
+import { useCurrentUser } from "app/hooks/useCurrentUser"
 
-if (process.env.SPLITBEE_TOKEN) {
-  splitbee.init({ token: process.env.SPLITBEE_TOKEN })
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
+  const getLayout = Component.getLayout || ((page) => page)
+  const [user] = useCurrentUser({}, false)
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && user) {
+      splitbee.user.set({ email: user.email })
+    }
+  }, [user])
+
+  return <ChakraProvider resetCSS>{getLayout(<Component {...pageProps} />)}</ChakraProvider>
 }
 
-export default function App({ Component, pageProps }: AppProps) {
-  const getLayout = Component.getLayout || ((page) => page)
+export default function App(props: AppProps) {
   const router = useRouter()
+
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_SPLITBEE_TOKEN) {
+      splitbee.init({
+        token: process.env.NEXT_PUBLIC_SPLITBEE_TOKEN,
+        scriptUrl: "/bee.js",
+        apiUrl: "/_hive",
+      })
+    }
+  }, [])
 
   return (
     <ErrorBoundary
@@ -25,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
       }}
     >
       <Global />
-      <ChakraProvider resetCSS>{getLayout(<Component {...pageProps} />)}</ChakraProvider>
+      <MyApp {...props} />
     </ErrorBoundary>
   )
 }

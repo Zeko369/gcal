@@ -161,7 +161,6 @@ export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal 
           icon={<EditIcon />}
           aria-label="edit"
           href={`/calendars/${calendar.id}/edit`}
-          onClick={() => splitbee.track("calendar:edit", { id: calendar.id })}
         />
         <IconButton
           {...buttonProps}

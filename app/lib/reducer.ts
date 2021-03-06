@@ -11,6 +11,7 @@ import {
   DATE_VALUE_COOKIE_NAME,
   SHOW_ALL_COOKIE_NAME,
 } from "app/constants/cookies"
+import splitbee from "@splitbee/web"
 
 export const Scales = ["day", "week", "month", "year"] as const
 export type Scale = typeof Scales[number]
@@ -84,6 +85,10 @@ export const day = (n = 1) => 1000 * 60 * 60 * 24 * n
 type DT = React.Dispatch<Action>
 
 export const setValueScale = (dispatch: DT) => (value: Date, scale: Scale) => {
+  if (typeof window !== "undefined") {
+    splitbee.track("home:change-value", { scale })
+  }
+
   dispatch({ type: "setValueScale", payload: { value, scale } })
   setCookie(null, DATE_SCALE_COOKIE_NAME, scale, cookieOptions)
   setCookie(null, DATE_VALUE_COOKIE_NAME, value.toISOString(), cookieOptions)

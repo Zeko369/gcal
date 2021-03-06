@@ -15,11 +15,13 @@ type A = User & { sessions: Session[]; calendars: Calendar[]; groups: Group[] }
 
 // TODO: FIX GENERIC
 export const useCurrentUser = <T extends Omit<UserSelect, BaseUserSelect>>(
-  userSelect?: T
+  userSelect?: T,
+  suspense = true
 ): [A | null, () => void] => {
   const session = useSession()
   const [user, { refetch }] = useQuery(getCurrentUser, userSelect || {}, {
     enabled: !!session.userId,
+    suspense,
   })
 
   return [session.userId ? (user as any) : null, refetch]
