@@ -35,7 +35,7 @@ export const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
   const events = combine
     ? state.events.reduce((data, curr) => {
         const foundIndex = data.findIndex(
-          (event) => event.summary.toUpperCase() === curr.summary.toUpperCase()
+          (event) => event.summary?.toUpperCase() === curr.summary?.toUpperCase()
         )
         if (foundIndex !== -1) {
           return data.map((event, index) =>
@@ -62,7 +62,7 @@ export const EventsModal: React.FC<EventModalProps> = ({ modal }) => {
                     <ListIcon as={() => <CheckIcon value={event.planned} />} color="green.500" />
                     {`${new Date(event.start).toDateString()} => [${event.time / 60}h]`}
                     <br />
-                    {event.summary}
+                    {event.summary || "[NO_NAME]"}
                   </ListItem>
                 ))}
               </List>

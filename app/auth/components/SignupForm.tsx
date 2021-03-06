@@ -8,7 +8,7 @@ import { AuthContext } from "./AuthLayout"
 import { useMutation } from "blitz"
 
 type SignUpFormProps = {
-  onSuccess?: () => void
+  onSuccess?: (email: string) => void
 }
 
 interface SignupFormData {
@@ -52,7 +52,7 @@ export const SignupForm = (props: SignUpFormProps) => {
 
     try {
       await signupMutation({ ...values })
-      props.onSuccess && props.onSuccess()
+      props.onSuccess && props.onSuccess(values.email)
     } catch (error) {
       if (error.code === "P2002" && error.meta?.target?.includes("email")) {
         setError("email", { message: "This email is already being used" })

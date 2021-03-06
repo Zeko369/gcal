@@ -41,7 +41,7 @@ interface State {
   }
   events: {
     allDay: boolean
-    summary: string
+    summary?: string
     days: any
     time: number
     planned: boolean
@@ -164,16 +164,12 @@ const reducerHelper = (state: State, action: Action): State => {
     case "setEvents":
       return { ...state, ...action.payload }
     case "addCalendarData":
-      return {
-        ...state,
-        normalizedSums: {
-          ...state.normalizedSums,
-          [action.payload.calendarId]: {
-            done: action.payload.done,
-            all: action.payload.all,
-          },
-        },
-      }
+      return produce(state, (draft) => {
+        draft.normalizedSums[action.payload.calendarId] = {
+          done: action.payload.done,
+          all: action.payload.all,
+        }
+      })
     default:
       return state
   }

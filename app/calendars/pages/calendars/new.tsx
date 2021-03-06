@@ -6,6 +6,7 @@ import { ListGcal } from "app/calendars/components/ListGcal"
 import { CalendarForm, CalendarFormData } from "../../components/CalendarForm"
 import createCalendar from "../../mutations/createCalendar"
 import { Link } from "chakra-next-link"
+import splitbee from "@splitbee/web"
 
 const NewCalendarPage: BlitzPage = () => {
   const router = useRouter()
@@ -21,7 +22,11 @@ const NewCalendarPage: BlitzPage = () => {
 
       const { groupId, ...rest } = data
 
-      await createCalendarMutation({ data: { ...rest, uuid: selectedId }, groupId })
+      const calendar = await createCalendarMutation({
+        data: { ...rest, uuid: selectedId },
+        groupId,
+      })
+      await splitbee.track("calendar:create", { id: calendar.id })
       router.push("/")
     } catch (error) {
       alert("Error creating calendar " + JSON.stringify(error, null, 2))

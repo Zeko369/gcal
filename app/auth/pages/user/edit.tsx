@@ -13,6 +13,7 @@ import updateUser from "app/auth/mutations/updateUser"
 import { useDebounce } from "app/hooks/useDebounce"
 import isCurrentPasswordOk from "app/auth/mutations/isCurrentPasswordOk"
 import { Section } from "."
+import splitbee from "@splitbee/web"
 
 type UserFormData = Pick<User, "name">
 const PasswordFields = ["password", "confirm_password", "current_password"] as const
@@ -31,6 +32,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, refetch }) => {
 
   const onSubmit = async (data: UserFormData) => {
     await updateUserMutation({ data: { name: { set: data.name } } })
+    await splitbee.track("user:edit:personal")
     refetch()
   }
 
@@ -100,6 +102,7 @@ const PasswordForm: React.FC = () => {
 
     try {
       await changePasswordMutation({ current_password, password })
+      await splitbee.track("user:edit:password")
       router.push("/user")
     } catch (err) {
       if (err.message === "old_no_match") {

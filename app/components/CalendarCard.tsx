@@ -18,6 +18,7 @@ import getGoogleCalendarEvents from "app/queries/getGoogleCalendarEvents"
 import { RestGoogleToken } from "./RestGoogleToken"
 import styled from "@emotion/styled"
 import { CALENDAR_CARD_COLOR_VARIANT } from "app/constants/colors"
+import splitbee from "@splitbee/web"
 
 // just to make prettier play nicer with some long functions
 type n = number
@@ -160,12 +161,16 @@ export const CalendarCard: React.FC<CalendarCardProps> = ({ calendar, openModal 
           icon={<EditIcon />}
           aria-label="edit"
           href={`/calendars/${calendar.id}/edit`}
+          onClick={() => splitbee.track("calendar:edit", { id: calendar.id })}
         />
         <IconButton
           {...buttonProps}
           icon={<ViewIcon />}
           aria-label="toggle show events"
-          onClick={onView}
+          onClick={() => {
+            onView()
+            splitbee.track("calendar:view", { id: calendar.id })
+          }}
         />
         <IconButton {...buttonProps} icon={<RepeatIcon />} aria-label="refresh" onClick={refetch} />
       </VStack>

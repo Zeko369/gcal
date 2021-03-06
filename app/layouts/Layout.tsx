@@ -1,4 +1,4 @@
-import React, { ReactNode, Suspense } from "react"
+import React, { ReactNode, Suspense, useEffect } from "react"
 import { Head, useMutation } from "blitz"
 import {
   HStack,
@@ -21,6 +21,7 @@ import NextLink from "next/link"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import logout from "app/auth/mutations/logout"
 import { AddIcon, MoonIcon, SettingsIcon, SunIcon } from "@chakra-ui/icons"
+import splitbee from "@splitbee/web"
 
 type LayoutProps = {
   title?: string
@@ -32,6 +33,10 @@ const User: React.FC = () => {
   const [logoutMutation] = useMutation(logout)
   const { colorMode, toggleColorMode } = useColorMode()
   const dark = colorMode === "dark"
+
+  useEffect(() => {
+    splitbee.user.set({ theme: colorMode })
+  }, [colorMode])
 
   return currentUser ? (
     <Menu>

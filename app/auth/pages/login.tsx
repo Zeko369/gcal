@@ -9,9 +9,10 @@ const LoginPage: BlitzPage = () => {
   const router = useRouter()
   return (
     <LoginForm
-      onSuccess={(email) => {
-        splitbee.user.set({ email })
-        router.push("/")
+      onSuccess={async (email) => {
+        await splitbee.user.set({ email })
+        await splitbee.track("auth:login")
+        await router.push("/")
       }}
     />
   )
