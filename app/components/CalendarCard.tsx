@@ -55,14 +55,16 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
   const formatPrice = useCallback(formatPriceRaw(calendar), [calendar])
 
   useEffect(() => {
-    dispatch({
-      type: "addCalendarData",
-      payload: {
-        calendarId: calendar.id,
-        done: data.soFar,
-        all: data.all,
-      },
-    })
+    if (data) {
+      dispatch({
+        type: "addCalendarData",
+        payload: {
+          calendarId: calendar.id,
+          done: data.soFar,
+          all: data.all,
+        },
+      })
+    }
   }, [data])
 
   useImperativeHandle(ref, () => ({
