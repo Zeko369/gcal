@@ -19,9 +19,26 @@ import { RestGoogleToken } from "./RestGoogleToken"
 import styled from "@emotion/styled"
 import { CALENDAR_CARD_COLOR_VARIANT } from "app/constants/colors"
 
-const format = (n: number) => Math.round(n * 100) / 100
-export const formatTime = (curr: number, all: number) =>
-  `${format(curr / 60)}h [${format(all / 60)}]`
+// just to make prettier play nicer with some long functions
+type n = number
+const format = (n: n) => Math.round(n * 100) / 100
+export const formatTime = (curr: n, all: n) => `${format(curr / 60)}h [${format(all / 60)}]`
+export const formatPriceRaw = (
+  calendar: Pick<Calendar, "pricePerHour" | "currency" | "currencyBefore">
+) => (curr: n, all: n): string => {
+  const pph = calendar.pricePerHour
+  const currencyBefore = calendar.currencyBefore ? calendar.currency || "Na" : ""
+  const currencyAfter = calendar.currencyBefore ? "" : calendar.currency || "Na"
+
+  if (!pph) {
+    return "No PPH"
+  }
+
+  const done = `${currencyBefore}${format((curr / 60) * pph)}${currencyAfter}`
+  const todo = `[${currencyBefore}${format((all / 60) * pph)}${currencyAfter}]`
+
+  return `${done} ${todo}`
+}
 
 type CalendarEventsProps = { calendar: Calendar }
 const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
@@ -34,23 +51,7 @@ const CalendarEvents = forwardRef(({ calendar }: CalendarEventsProps, ref) => {
   }
 
   const [{ data }, { refetch }] = useQuery(getGoogleCalendarEvents, args)
-  const formatPrice = useCallback(
-    (curr: number, all: number): string => {
-      const pph = calendar.pricePerHour
-      const currencyBefore = calendar.currencyBefore ? calendar.currency || "Na" : ""
-      const currencyAfter = calendar.currencyBefore ? "" : calendar.currency || "Na"
-
-      if (!pph) {
-        return "No PPH"
-      }
-
-      const done = `${currencyBefore}${format((curr / 60) * pph)}${currencyAfter}`
-      const todo = `[${currencyBefore}${format((all / 60) * pph)}${currencyAfter}]`
-
-      return `${done} ${todo}`
-    },
-    [calendar]
-  )
+  const formatPrice = useCallback(formatPriceRaw(calendar), [calendar])
 
   useEffect(() => {
     dispatch({

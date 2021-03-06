@@ -36,7 +36,7 @@ import { useCurrentUser } from "app/hooks/useCurrentUser"
 import Layout from "app/layouts/Layout"
 import { cookieOptions } from "app/lib/cookie"
 import { EventsModal } from "app/components/EventsModal"
-import { CalendarCard, formatTime } from "app/components/CalendarCard"
+import { CalendarCard, formatPriceRaw, formatTime } from "app/components/CalendarCard"
 import { NavigationButton } from "app/components/NavigationButton"
 import { LinkButton, LinkIconButton } from "chakra-next-link"
 import homepageQuery from "app/queries/homepageQuery"
@@ -89,18 +89,36 @@ const HomePage: React.FC = () => {
   const combinedPrices = filteredGroups.map((group) =>
     group.calendars.reduce(
       (combined, curr) => {
-        const [done, all] = combined
         const data = state.normalizedSums[curr.id]
+        let [done, all] = combined
 
         if (data) {
-          return [done + data.done, all + data.all]
+          if (state.showPrice) {
+            if (curr.pricePerHour) {
+              done += data.done * curr.pricePerHour
+              all += data.all * curr.pricePerHour
+            }
+          } else {
+            done += data.done
+            all += data.all
+          }
         }
 
         return [done, all]
       },
       [0, 0]
     )
-  )
+  ) as [number, number][]
+
+  const format = (data: [number, number]) => {
+    const [done, all] = data
+
+    if (state.showPrice) {
+      return formatPriceRaw({ currency: "kn", currencyBefore: false, pricePerHour: 1 })(done, all)
+    }
+
+    return formatTime(done, all)
+  }
 
   return (
     <Box>
@@ -190,8 +208,10 @@ const HomePage: React.FC = () => {
                   <Heading>
                     {group.name}
                     {showCombinedPrices && (
-                      <Text d="inline" ml="4">
-                        {formatTime(combinedPrices[index][0], combinedPrices[index][1])}
+                      <Text d="inline" ml="4" fontWeight="normal" fontSize="2xl">
+                        {combinedPrices[index]?.[0]
+                          ? format(combinedPrices[index])
+                          : "no combined for this group"}
                       </Text>
                     )}
                   </Heading>
